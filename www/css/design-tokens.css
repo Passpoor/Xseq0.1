@@ -1,0 +1,316 @@
+/* =====================================================
+   设计系统基础 - Design Tokens
+   版本: 2.0
+   说明: 完整的设计系统变量定义
+   ===================================================== */
+
+/* =====================================================
+   🎨 颜色系统 - Color System
+   ===================================================== */
+
+:root {
+  /* 品牌色 - Brand Colors (Light Mode) */
+  --color-primary: #007AFF;
+  --color-primary-hover: #0056CC;
+  --color-primary-active: #0044AA;
+  --color-primary-light: rgba(0, 122, 255, 0.1);
+
+  --color-success: #34C759;
+  --color-success-hover: #28A745;
+  --color-success-light: rgba(52, 199, 89, 0.1);
+
+  --color-warning: #FF9F0A;
+  --color-warning-hover: #F59E0B;
+  --color-warning-light: rgba(255, 159, 10, 0.1);
+
+  --color-error: #FF3B30;
+  --color-error-hover: #DC2626;
+  --color-error-light: rgba(255, 59, 48, 0.1);
+
+  --color-info: #5856D6;
+  --color-info-hover: #4F46E5;
+  --color-info-light: rgba(88, 86, 214, 0.1);
+
+  /* 中性色 - Neutral Colors (Light Mode) */
+  --bg-base: #FFFFFF;
+  --bg-alt: #F5F5F7;
+  --bg-alt-2: #EFEFF4;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active: rgba(0, 0, 0, 0.08);
+
+  --border-light: #E5E5EA;
+  --border-medium: #D1D1D6;
+  --border-dark: #C7C7CC;
+
+  --text-primary: #1C1C1E;
+  --text-secondary: #6E6E73;
+  --text-tertiary: #AEAEB2;
+  --text-disabled: #D1D1D6;
+  --text-inverse: #FFFFFF;
+
+  /* 渐变 - Gradients */
+  --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-success: linear-gradient(135deg, #34C759 0%, #30B550 100%);
+  --gradient-subtle: linear-gradient(135deg, #F5F5F7 0%, #EFEFF4 50%, #F5F5F7 100%);
+
+  /* 阴影 - Shadows (Light Mode) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15), 0 10px 10px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.25);
+
+  /* 焦点环 - Focus Ring */
+  --focus-ring: 0 0 0 3px rgba(0, 122, 255, 0.3);
+  --focus-ring-success: 0 0 0 3px rgba(52, 199, 89, 0.3);
+  --focus-ring-error: 0 0 0 3px rgba(255, 59, 48, 0.3);
+
+  /* =====================================================
+     📐 间距系统 - Spacing System (8px Grid)
+     ===================================================== */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --spacing-xl: 24px;
+  --spacing-2xl: 32px;
+  --spacing-3xl: 48px;
+  --spacing-4xl: 64px;
+  --spacing-5xl: 96px;
+
+  /* =====================================================
+     🔲 圆角 - Border Radius
+     ===================================================== */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* =====================================================
+     ✏️ 字体系统 - Typography
+     ===================================================== */
+  --font-family-base: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+  --font-family-mono: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+
+  /* 字体大小 - Font Sizes (Desktop) */
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 26px;
+  --font-size-3xl: 32px;
+  --font-size-4xl: 40px;
+
+  /* 行高 - Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* 字重 - Font Weights */
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* 字母间距 - Letter Spacing */
+  --letter-spacing-tight: -0.02em;
+  --letter-spacing-normal: 0;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+
+  /* =====================================================
+     ⏱️ 过渡与动画 - Transitions & Animations
+     ===================================================== */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
+
+  /* 缓动函数 - Easing Functions */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.5, 1.5, 0.5, 1);
+
+  /* Z-index 层级 - Z-index Scale */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+  --z-toast: 1080;
+}
+
+/* =====================================================
+   🌙 深色模式 - Dark Mode Overrides
+   ===================================================== */
+
+.dark-mode {
+  /* 品牌色调整 - Enhanced brightness for dark mode */
+  --color-primary: #0A84FF;
+  --color-primary-hover: #409CFF;
+  --color-primary-active: #66B3FF;
+  --color-primary-light: rgba(10, 132, 255, 0.15);
+
+  --color-success: #32D74B;
+  --color-success-hover: #50E468;
+  --color-success-light: rgba(50, 215, 75, 0.15);
+
+  --color-warning: #FF9F0A;
+  --color-warning-hover: #FFB340;
+  --color-warning-light: rgba(255, 159, 10, 0.15);
+
+  --color-error: #FF453A;
+  --color-error-hover: #FF6961;
+  --color-error-light: rgba(255, 69, 58, 0.15);
+
+  --color-info: #5E5CE6;
+  --color-info-hover: #7B79EB;
+  --color-info-light: rgba(94, 92, 230, 0.15);
+
+  /* 中性色 - Neutral Colors (Dark Mode) */
+  --bg-base: #1C1C1E;
+  --bg-alt: #2C2C2E;
+  --bg-alt-2: #3A3A3C;
+  --bg-hover: rgba(255, 255, 255, 0.08);
+  --bg-active: rgba(255, 255, 255, 0.12);
+
+  --border-light: #38383A;
+  --border-medium: #48484A;
+  --border-dark: #636366;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #AEAEB2;
+  --text-tertiary: #6E6E73;
+  --text-disabled: #48484A;
+  --text-inverse: #1C1C1E;
+
+  /* 渐变 - Gradients (Dark Mode) */
+  --gradient-subtle: linear-gradient(135deg, #1C1C1E 0%, #252528 50%, #1C1C1E 100%);
+
+  /* 阴影 - Shadows (Dark Mode - more opaque) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.6), 0 4px 6px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.7), 0 10px 10px rgba(0, 0, 0, 0.6);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.85);
+
+  /* 焦点环 - Focus Ring (Dark Mode) */
+  --focus-ring: 0 0 0 3px rgba(10, 132, 255, 0.4);
+  --focus-ring-success: 0 0 0 3px rgba(50, 215, 75, 0.4);
+  --focus-ring-error: 0 0 0 3px rgba(255, 69, 58, 0.4);
+}
+
+/* =====================================================
+   📱 响应式断点 - Responsive Breakpoints
+   ===================================================== */
+
+/* xs (Mobile): 0-479px */
+@media (max-width: 479px) {
+  :root {
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-md: 15px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 22px;
+    --font-size-3xl: 26px;
+    --font-size-4xl: 32px;
+  }
+}
+
+/* sm (Mobile): 480-767px */
+@media (min-width: 480px) and (max-width: 767px) {
+  :root {
+    --font-size-xs: 10px;
+    --font-size-sm: 12px;
+    --font-size-base: 14px;
+    --font-size-md: 15px;
+    --font-size-lg: 17px;
+    --font-size-xl: 20px;
+    --font-size-2xl: 24px;
+    --font-size-3xl: 28px;
+    --font-size-4xl: 36px;
+  }
+}
+
+/* md (Tablet): 768-1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-base: 15px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 21px;
+    --font-size-2xl: 25px;
+    --font-size-3xl: 30px;
+    --font-size-4xl: 38px;
+  }
+}
+
+/* lg (Desktop): 1024px+ */
+@media (min-width: 1024px) {
+  :root {
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-base: 15px;
+    --font-size-md: 16px;
+    --font-size-lg: 18px;
+    --font-size-xl: 22px;
+    --font-size-2xl: 26px;
+    --font-size-3xl: 32px;
+    --font-size-4xl: 40px;
+  }
+}
+
+/* =====================================================
+   ♿ 可访问性 - Accessibility Utilities
+   ===================================================== */
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  :root {
+    --border-light: #000000;
+    --text-secondary: #2C2C2E;
+  }
+
+  .dark-mode {
+    --border-light: #FFFFFF;
+    --text-secondary: #FFFFFF;
+  }
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 深色模式系统偏好 */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode) {
+    --bg-base: #1C1C1E;
+    --bg-alt: #2C2C2E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #AEAEB2;
+  }
+}

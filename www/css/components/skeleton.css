@@ -1,0 +1,415 @@
+/* =====================================================
+   骨架屏加载状态样式
+   Skeleton Loading States
+   ===================================================== */
+
+/* 基础骨架样式 */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-alt) 0%,
+    var(--border-light) 50%,
+    var(--bg-alt) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-sm);
+  color: transparent !important;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* 文本骨架 */
+.skeleton-text {
+  height: 1em;
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
+  display: inline-block;
+}
+
+.skeleton-text-xs {
+  height: 0.75em;
+}
+
+.skeleton-text-sm {
+  height: 0.875em;
+}
+
+.skeleton-text-md {
+  height: 1em;
+}
+
+.skeleton-text-lg {
+  height: 1.25em;
+}
+
+.skeleton-text-xl {
+  height: 1.5em;
+}
+
+/* 文本宽度变体 */
+.skeleton-text-10 { width: 10%; }
+.skeleton-text-20 { width: 20%; }
+.skeleton-text-30 { width: 30%; }
+.skeleton-text-40 { width: 40%; }
+.skeleton-text-50 { width: 50%; }
+.skeleton-text-60 { width: 60%; }
+.skeleton-text-70 { width: 70%; }
+.skeleton-text-80 { width: 80%; }
+.skeleton-text-90 { width: 90%; }
+.skeleton-text-100 { width: 100%; }
+
+/* 圆形骨架 */
+.skeleton-circle {
+  border-radius: var(--radius-full);
+}
+
+.skeleton-avatar-sm {
+  width: 32px;
+  height: 32px;
+}
+
+.skeleton-avatar-md {
+  width: 40px;
+  height: 40px;
+}
+
+.skeleton-avatar-lg {
+  width: 56px;
+  height: 56px;
+}
+
+.skeleton-avatar-xl {
+  width: 80px;
+  height: 80px;
+}
+
+/* 卡片骨架 */
+.skeleton-card {
+  background: var(--bg-base);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+.skeleton-card-header {
+  height: 24px;
+  width: 60%;
+  margin-bottom: var(--spacing-lg);
+}
+
+.skeleton-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* 按钮骨架 */
+.skeleton-button {
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: inline-block;
+}
+
+.skeleton-button-sm {
+  height: 36px;
+  width: 80px;
+}
+
+.skeleton-button-md {
+  height: 44px;
+  width: 120px;
+}
+
+.skeleton-button-lg {
+  height: 52px;
+  width: 160px;
+}
+
+/* 输入框骨架 */
+.skeleton-input {
+  height: 44px;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* 图片骨架 */
+.skeleton-image {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-image-square {
+  aspect-ratio: 1 / 1;
+}
+
+.skeleton-image-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+/* 表格骨架 */
+.skeleton-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.skeleton-table thead {
+  border-bottom: 2px solid var(--border-light);
+}
+
+.skeleton-table th {
+  padding: var(--spacing-md);
+  text-align: left;
+}
+
+.skeleton-table thead .skeleton {
+  height: 16px;
+  width: 100%;
+}
+
+.skeleton-table td {
+  padding: var(--spacing-md);
+}
+
+.skeleton-table-row {
+  display: flex;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+/* 统计卡片骨架 */
+.skeleton-stat-card {
+  background: var(--bg-base);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  min-height: 120px;
+}
+
+.skeleton-stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-md);
+}
+
+.skeleton-stat-value {
+  height: 36px;
+  width: 60%;
+  margin-bottom: var(--spacing-sm);
+}
+
+.skeleton-stat-label {
+  height: 16px;
+  width: 40%;
+}
+
+/* 图表骨架 */
+.skeleton-chart {
+  background: var(--bg-base);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeleton-chart-header {
+  height: 24px;
+  width: 40%;
+  margin-bottom: var(--spacing-xl);
+}
+
+.skeleton-chart-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+}
+
+.skeleton-chart-bar {
+  width: 40px;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-chart-bar:nth-child(1) { height: 60%; }
+.skeleton-chart-bar:nth-child(2) { height: 80%; }
+.skeleton-chart-bar:nth-child(3) { height: 45%; }
+.skeleton-chart-bar:nth-child(4) { height: 90%; }
+.skeleton-chart-bar:nth-child(5) { height: 70%; }
+
+/* 列表骨架 */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.skeleton-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-base);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.skeleton-list-item-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.skeleton-list-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+/* 网格骨架 */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.skeleton-grid-item {
+  background: var(--bg-base);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+/* 动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 脉冲动画变体 */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.skeleton-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+  background: var(--bg-alt);
+}
+
+/* 深色模式调整 */
+.dark-mode .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-alt) 0%,
+    var(--border-light) 50%,
+    var(--bg-alt) 100%
+  );
+}
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+
+  .skeleton-pulse {
+    animation: none;
+  }
+}
+
+/* 可访问性 */
+.skeleton[aria-hidden="true"] {
+  speak: none;
+}
+
+/* 加载状态组合 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-3xl);
+  gap: var(--spacing-md);
+}
+
+.loading-state-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-state-text {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* 页面骨架 */
+.skeleton-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-2xl);
+}
+
+.skeleton-page-header {
+  margin-bottom: var(--spacing-2xl);
+}
+
+.skeleton-page-title {
+  height: 40px;
+  width: 40%;
+  margin-bottom: var(--spacing-md);
+}
+
+.skeleton-page-subtitle {
+  height: 20px;
+  width: 60%;
+}
+
+.skeleton-page-content {
+  display: grid;
+  gap: var(--spacing-xl);
+}
+
+/* 响应式调整 */
+@media (max-width: 767px) {
+  .skeleton-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .skeleton-page {
+    padding: var(--spacing-lg);
+  }
+}

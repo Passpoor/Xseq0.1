@@ -1,0 +1,80 @@
+# R specific
+.Rhistory
+.RData
+.RDataTmp
+.Rproj.user
+.Renviron
+
+# Database version cache
+.db_version_cache.rds
+
+# Shiny specific
+rsconnect/
+shiny_score/
+shiny_app.*
+
+# Database (keep template in data/, ignore instances)
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Config files (API keys)
+zhipu_config.RData
+api_config.RData
+email_config.RData
+
+# License files (keep in private repo only)
+licenses.json
+.license_cache.rds
+.machine_code.rds
+.usage_count.rds
+license_admin.R
+
+# Logs
+omnipathr-log/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# Backup files
+*.backup
+*_backup.R
+*_backup.*
+
+# Output directories
+output/
+-p/
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test outputs
+test_*.rds
+test_*.pdf
+test_*.png
+test_*.csv
+
+# Documentation builds
+docs/_site/
+docs/.gitbook/
+
+# Claude specific
+.claude/
+
+# Package directories (installed R packages)
+biofree.qyKEGGtools/
+
+# Data cache files
+*.rds
+!data/*.rds

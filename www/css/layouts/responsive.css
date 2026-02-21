@@ -1,0 +1,659 @@
+/* =====================================================
+   响应式设计和移动端优化
+   Responsive Design & Mobile Optimization
+   ===================================================== */
+
+/* =====================================================
+   📱 断点系统 - Breakpoint System
+   ===================================================== */
+
+/* xs (Mobile Portrait): 0-479px */
+@media (max-width: 479px) {
+  :root {
+    --container-padding: 16px;
+  }
+
+  .container {
+    padding: 0 var(--container-padding);
+  }
+
+  /* 隐藏大屏幕元素 */
+  .hide-xs {
+    display: none !important;
+  }
+}
+
+/* sm (Mobile Landscape): 480-767px */
+@media (min-width: 480px) and (max-width: 767px) {
+  :root {
+    --container-padding: 20px;
+  }
+
+  .container {
+    padding: 0 var(--container-padding);
+  }
+
+  .hide-sm {
+    display: none !important;
+  }
+}
+
+/* md (Tablet): 768-1023px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --container-padding: 32px;
+  }
+
+  .hide-md {
+    display: none !important;
+  }
+}
+
+/* lg (Desktop): 1024px+ */
+@media (min-width: 1024px) {
+  :root {
+    --container-padding: 40px;
+  }
+
+  .hide-lg {
+    display: none !important;
+  }
+}
+
+/* xl (Large Desktop): 1440px+ */
+@media (min-width: 1440px) {
+  :root {
+    --container-padding: 48px;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
+
+/* =====================================================
+   📐 布局系统 - Layout System
+   ===================================================== */
+
+/* 容器 */
+.container {
+  width: 100%;
+  padding: 0 var(--spacing-lg);
+  margin: 0 auto;
+}
+
+.container-fluid {
+  width: 100%;
+  padding: 0 var(--spacing-lg);
+}
+
+/* 网格系统 */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 calc(var(--spacing-lg) * -0.5);
+}
+
+.col {
+  flex: 1 0 0%;
+  padding: 0 calc(var(--spacing-lg) * 0.5);
+}
+
+/* 移动端: 1列 */
+.col-xs-1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
+.col-xs-2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
+.col-xs-3 { flex: 0 0 25%; max-width: 25%; }
+.col-xs-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+.col-xs-5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
+.col-xs-6 { flex: 0 0 50%; max-width: 50%; }
+.col-xs-7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
+.col-xs-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+.col-xs-9 { flex: 0 0 75%; max-width: 75%; }
+.col-xs-10 { flex: 0 0 83.333333%; max-width: 83.333333%; }
+.col-xs-11 { flex: 0 0 91.666667%; max-width: 91.666667%; }
+.col-xs-12 { flex: 0 0 100%; max-width: 100%; }
+
+/* 平板: 2列 */
+@media (min-width: 768px) {
+  .col-md-1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
+  .col-md-2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
+  .col-md-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-md-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+  .col-md-5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
+  .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-md-7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
+  .col-md-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+  .col-md-9 { flex: 0 0 75%; max-width: 75%; }
+  .col-md-10 { flex: 0 0 83.333333%; max-width: 83.333333%; }
+  .col-md-11 { flex: 0 0 91.666667%; max-width: 91.666667%; }
+  .col-md-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* 桌面: 3-4列 */
+@media (min-width: 1024px) {
+  .col-lg-1 { flex: 0 0 8.333333%; max-width: 8.333333%; }
+  .col-lg-2 { flex: 0 0 16.666667%; max-width: 16.666667%; }
+  .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
+  .col-lg-4 { flex: 0 0 33.333333%; max-width: 33.333333%; }
+  .col-lg-5 { flex: 0 0 41.666667%; max-width: 41.666667%; }
+  .col-lg-6 { flex: 0 0 50%; max-width: 50%; }
+  .col-lg-7 { flex: 0 0 58.333333%; max-width: 58.333333%; }
+  .col-lg-8 { flex: 0 0 66.666667%; max-width: 66.666667%; }
+  .col-lg-9 { flex: 0 0 75%; max-width: 75%; }
+  .col-lg-10 { flex: 0 0 83.333333%; max-width: 83.333333%; }
+  .col-lg-11 { flex: 0 0 91.666667%; max-width: 91.666667%; }
+  .col-lg-12 { flex: 0 0 100%; max-width: 100%; }
+}
+
+/* =====================================================
+   📱 移动端导航 - Mobile Navigation
+   ===================================================== */
+
+/* 汉堡菜单按钮 */
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.mobile-menu-btn span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.mobile-menu-btn.active span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.mobile-menu-btn.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.mobile-menu-btn.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* 移动端侧边栏 */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  background: var(--bg-base);
+  box-shadow: var(--shadow-2xl);
+  z-index: var(--z-modal);
+  transform: translateX(-100%);
+  transition: transform var(--duration-normal) var(--ease-out);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mobile-sidebar.open {
+  transform: translateX(0);
+}
+
+.mobile-sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: calc(var(--z-modal) - 1);
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--duration-normal) var(--ease-out);
+  backdrop-filter: blur(4px);
+}
+
+.mobile-sidebar-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 移动端显示汉堡菜单 */
+@media (max-width: 767px) {
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+/* =====================================================
+   👆 触摸优化 - Touch Optimization
+   ===================================================== */
+
+/* 最小触摸目标 44x44px */
+@media (max-width: 767px) {
+  .btn,
+  button,
+  a.btn,
+  .checkbox-item,
+  .radio-item,
+  .list-item {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .btn-sm {
+    min-height: 40px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  /* 增大输入框 */
+  .form-control {
+    height: 48px;
+    font-size: 16px; /* 防止 iOS 自动缩放 */
+  }
+
+  .form-control-sm {
+    height: 44px;
+  }
+
+  .form-control-lg {
+    height: 52px;
+  }
+
+  /* 增大复选框和单选框 */
+  .checkbox-input,
+  .radio-input {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* 增大触摸间距 */
+  .toast {
+    margin: var(--spacing-sm);
+  }
+
+  .stepper-step {
+    padding: var(--spacing-md);
+  }
+}
+
+/* 移除点击高亮 */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* 优化滚动 */
+.mobile-optimizations {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+/* =====================================================
+   📊 移动端表格 - Mobile Tables
+   ===================================================== */
+
+@media (max-width: 767px) {
+  /* 表格横向滚动 */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive table {
+    min-width: 600px;
+  }
+
+  /* 卡片式表格 */
+  .table-mobile-cards {
+    display: block;
+  }
+
+  .table-mobile-cards thead {
+    display: none;
+  }
+
+  .table-mobile-cards tbody,
+  .table-mobile-cards tr {
+    display: block;
+    width: 100%;
+  }
+
+  .table-mobile-cards tr {
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    background: var(--bg-base);
+  }
+
+  .table-mobile-cards td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    border: none;
+    text-align: right;
+  }
+
+  .table-mobile-cards td::before {
+    content: attr(data-label);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-secondary);
+    text-align: left;
+  }
+}
+
+/* =====================================================
+   🎛️ 移动端工具栏 - Mobile Toolbar
+   ===================================================== */
+
+/* 底部固定工具栏 */
+.mobile-toolbar {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--bg-base);
+  border-top: 1px solid var(--border-light);
+  padding: var(--spacing-md);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: var(--z-fixed);
+}
+
+.mobile-toolbar .btn {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (max-width: 767px) {
+  .mobile-toolbar {
+    display: block;
+  }
+
+  /* 为底部工具栏添加内容padding */
+  body.has-mobile-toolbar {
+    padding-bottom: 80px;
+  }
+}
+
+/* =====================================================
+   📱 移动端标签页 - Mobile Tabs
+   ===================================================== */
+
+@media (max-width: 767px) {
+  .nav-tabs {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .nav-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav-tabs .nav-link {
+    white-space: nowrap;
+    flex-shrink: 0;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-light);
+  }
+
+  .nav-tabs .nav-link.active {
+    background: var(--color-primary);
+    color: var(--text-inverse);
+    border-color: var(--color-primary);
+  }
+}
+
+/* =====================================================
+   🔄 移动端卡片布局 - Mobile Card Layout
+   ===================================================== */
+
+@media (max-width: 767px) {
+  /* 单列布局 */
+  .row-mobile-stack {
+    flex-direction: column;
+  }
+
+  .row-mobile-stack > * {
+    width: 100% !important;
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* 堆叠卡片 */
+  .card-mobile-stack .card {
+    margin-bottom: var(--spacing-md);
+  }
+
+  /* 隐藏不重要的列 */
+  .hide-on-mobile {
+    display: none !important;
+  }
+
+  /* 压缩间距 */
+  .mobile-compact {
+    gap: var(--spacing-sm) !important;
+    padding: var(--spacing-sm) !important;
+  }
+
+  /* 全宽元素 */
+  .mobile-full-width {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+/* =====================================================
+   📱 移动端模态框 - Mobile Modals
+   ===================================================== */
+
+@media (max-width: 767px) {
+  .modal-dialog {
+    width: 100%;
+    margin: 0;
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .modal-content {
+    height: 100%;
+    border-radius: 0;
+    border: none;
+  }
+
+  .modal-body {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 底部弹出式模态框 */
+  .modal-bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-height: 80vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin: auto;
+    transform: translateY(100%);
+  }
+
+  .modal-bottom-sheet.show {
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   🌙 移动端深色模式 - Mobile Dark Mode
+   ===================================================== */
+
+@media (max-width: 767px) {
+  .dark-mode-toggle {
+    position: fixed;
+    bottom: calc(70px + var(--spacing-md));
+    right: var(--spacing-md);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: var(--text-inverse);
+    border: none;
+    box-shadow: var(--shadow-lg);
+    z-index: calc(var(--z-fixed) - 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+
+  .dark-mode-toggle:hover {
+    transform: scale(1.1);
+  }
+}
+
+/* =====================================================
+   📱 移动端加载状态 - Mobile Loading States
+   ===================================================== */
+
+@media (max-width: 767px) {
+  /* 全屏加载 */
+  .mobile-loading-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: var(--z-modal);
+    padding: var(--spacing-2xl);
+  }
+
+  .mobile-loading-fullscreen .loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid var(--border-light);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .mobile-loading-fullscreen .loading-text {
+    margin-top: var(--spacing-lg);
+    color: var(--text-secondary);
+    font-size: var(--font-size-base);
+  }
+}
+
+/* =====================================================
+   📱 安全区域适配 - Safe Area Support
+   ===================================================== */
+
+/* iOS 安全区域适配 */
+@supports (padding: max(0px)) {
+  .safe-area-top {
+    padding-top: max(var(--spacing-lg), env(safe-area-inset-top));
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(var(--spacing-lg), env(safe-area-inset-bottom));
+  }
+
+  .safe-area-left {
+    padding-left: max(var(--spacing-lg), env(safe-area-inset-left));
+  }
+
+  .safe-area-right {
+    padding-right: max(var(--spacing-lg), env(safe-area-inset-right));
+  }
+
+  .safe-area-all {
+    padding: max(var(--spacing-lg), env(safe-area-inset-top))
+                max(var(--spacing-lg), env(safe-area-inset-right))
+                max(var(--spacing-lg), env(safe-area-inset-bottom))
+                max(var(--spacing-lg), env(safe-area-inset-left));
+  }
+}
+
+/* =====================================================
+   📱 横屏适配 - Landscape Orientation
+   ===================================================== */
+
+@media (max-width: 767px) and (orientation: landscape) {
+  .hide-landscape {
+    display: none !important;
+  }
+
+  /* 减少垂直间距 */
+  .landscape-compact {
+    padding-top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+
+  /* 固定高度滚动 */
+  .landscape-scroll {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+}
+
+/* =====================================================
+   ♿ 可访问性增强 - Accessibility Enhancements
+   ===================================================== */
+
+/* 减少动画偏好 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .btn,
+  .form-control,
+  .card,
+  .list-item {
+    border-width: 2px;
+  }
+
+  .toast {
+    border: 2px solid currentColor;
+  }
+}
+
+/* 深色模式偏好 */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light-mode-force) {
+    --bg-base: #1C1C1E;
+    --bg-alt: #2C2C2E;
+    --text-primary: #FFFFFF;
+    --text-secondary: #AEAEB2;
+  }
+}

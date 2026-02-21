@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature风格 KEGG 绘图工具 (V10.8 - 基因标签可隐藏)</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        body { font-family: 'Arial', sans-serif; margin: 0; display: flex; height: 100vh; background-color: #f0f2f5; color: #333; }
+
+        /* 左侧面板样式 */
+        .sidebar {
+            width: 350px;
+            background: #fff;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-shrink: 0;
+        }
+
+        .panel-header { font-size: 18px; font-weight: bold; border-bottom: 2px solid #007bff; padding-bottom: 8px; margin-bottom: 10px; color: #007bff; }
+
+        .control-group { background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
+        .control-group label { display: block; margin-bottom: 4px; font-size: 13px; font-weight: 600; color: #555; }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%; box-sizing: border-box; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; margin-bottom: 8px;
+            font-family: 'Arial', sans-serif;
+        }
+
+        textarea { resize: vertical; font-family: monospace; }
+
+        .row { display: flex; gap: 10px; }
+        .col { flex: 1; }
+
+        /* 按钮样式 */
+        .btn {
+            width: 100%; padding: 8px; border: none; border-radius: 4px;
+            cursor: pointer; font-size: 13px; font-weight: bold; transition: 0.2s; margin-bottom: 5px;
+            font-family: 'Arial', sans-serif;
+        }
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-primary:hover { background-color: #0056b3; }
+
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-danger:hover { background-color: #c82333; }
+
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-success:hover { background-color: #218838; }
+
+        .btn-outline { background-color: white; border: 1px solid #007bff; color: #007bff; }
+        .btn-outline:hover { background-color: #eaf4ff; }
+
+        /* 高亮列表样式 */
+        #highlight-list {
+            height: 150px; overflow-y: auto; border: 1px solid #ddd; background: white; padding: 5px; border-radius: 4px;
+        }
+        .hl-item { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 2px 0; border-bottom: 1px dashed #eee; }
+        .hl-item:hover { background-color: #f0f0f0; }
+
+        /* 绘图区域 */
+        .main {
+            flex: 1;
+            background: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: auto;
+        }
+
+        /* 实际画布容器 - ECharts 需要一个固定大小的容器 */
+        #plot-wrapper {
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        /* 状态提示样式 */
+        #statusMessage {
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 13px;
+            text-align: center;
+        }
+        .status-error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        /* 辅助样式：用于调整布局留白，防止缩放 */
+        .control-group small.layout-hint { color: #007bff; margin-top: 5px; display: block; font-weight: bold; }
+
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div>
+        <div class="panel-header">1. 数据源</div>
+        <button class="btn btn-outline" onclick="loadDemoData()">加载示例数据</button>
+        <div class="control-group">
+            <label>粘贴 Excel 数据 (名称+分数+基因列表):</label>
+            <textarea id="dataInput" rows="4" placeholder="粘贴三列数据..."></textarea>
+            <div style="text-align: right; margin-top:5px;">
+                <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" />
+                <button class="btn btn-primary" style="width:auto;" onclick="document.getElementById('fileInput').click()">上传 Excel</button>
+                <button class="btn btn-success" style="width:auto;" onclick="parseData()">生成图表</button>
+            </div>
+             <div id="statusMessage"></div> </div>
+    </div>
+
+    <div>
+        <div class="panel-header">2. Y轴文字高亮</div>
+        <div class="control-group">
+            <label style="color:#d9534f;">勾选下方通路使其Y轴文字高亮：</label>
+            <div id="highlight-list">
+                <div style="padding:10px; color:#999; text-align:center;">暂无数据</div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <div class="col"><label>高亮色:</label><input type="color" id="hlColor" value="#FF0000" onchange="updatePlot()" style="width:100%"></div>
+                <div class="col"><label>普通色:</label><input type="color" id="norColor" value="#000000" onchange="updatePlot()" style="width:100%"></div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="panel-header">3. 图表样式与配色</div>
+        <div class="control-group">
+            <button class="btn btn-danger" id="clearAxisBtn" onclick="toggleCleanMode()">清除/恢复轴信息</button>
+            <small class="layout-hint">切换后图表布局不会缩放。</small>
+
+            <label>主标题:</label>
+            <input type="text" id="mainTitle" value="KEGG Enrichment Analysis" oninput="updatePlot()">
+
+            <div class="row">
+                <div class="col">
+                    <label>X轴标题:</label>
+                    <input type="text" id="xAxisTitle" value="Enrichment Score" oninput="updatePlot()">
+                </div>
+                <div class="col">
+                    <label>Y轴字号 (标准模式):</label>
+                    <input type="number" id="yFontSize" value="12" oninput="updatePlot()">
+                </div>
+            </div>
+
+             <div class="row">
+                <div class="col">
+                    <label>Y轴留白宽度 (px):</label>
+                    <input type="number" id="gridLeft" value="200" oninput="updatePlot()" title="增加此值以适应更长的通路名称">
+                </div>
+                <div class="col">
+                     <label>X轴留白高度 (px):</label>
+                    <input type="number" id="gridBottom" value="50" oninput="updatePlot()" title="增加此值以适应更长的X轴标题">
+                </div>
+            </div>
+
+            <div class="row">
+                 <div class="col">
+                    <label>画布宽 (px):</label>
+                    <input type="number" id="plotWidth" value="700" step="50" onchange="resizeContainer()">
+                </div>
+                <div class="col">
+                    <label>画布高 (px):</label>
+                    <input type="number" id="plotHeight" value="550" step="50" onchange="resizeContainer()">
+                </div>
+            </div>
+
+            <div class="row">
+                 <div class="col">
+                    <label>渐变起始色 (冷色, 低分):</label>
+                    <input type="color" id="gradientStartColor" value="#007bff" onchange="updatePlot()">
+                </div>
+                <div class="col">
+                    <label>渐变结束色 (暖色, 高分):</label>
+                    <input type="color" id="gradientEndColor" value="#dc3545" onchange="updatePlot()">
+                </div>
+             </div>
+             <div class="row">
+                <div class="col">
+                     <label>排序:</label>
+                     <select id="sortOrder" onchange="parseData()">
+                         <option value="asc" selected>短在下</option>
+                         <option value="desc">长在下 (推荐)</option>
+                     </select>
+                </div>
+                <div class="col">
+                    <label>柱子宽度 (0-100%):</label>
+                    <input type="number" id="barWidth" value="70" step="10" max="100" min="10" oninput="updatePlot()">
+                </div>
+             </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="panel-header">4. 基因标签设置 (内置于柱子, 贴Y轴)</div>
+        <div class="control-group">
+            <label>
+                <input type="checkbox" id="hideGeneLabel" onchange="updatePlot()">
+                隐藏基因标签 (用于外部编辑)
+            </label>
+            <hr style="margin: 10px 0;">
+
+             <div class="row">
+                <div class="col">
+                    <label>标签颜色:</label>
+                    <input type="color" id="geneColor" value="#FFFFFF" onchange="updatePlot()">
+                </div>
+                <div class="col">
+                    <label>标签字号:</label>
+                    <input type="number" id="geneFontSize" value="10" oninput="updatePlot()">
+                </div>
+             </div>
+             <div class="row">
+                 <div class="col">
+                    <label>加粗:</label>
+                    <select id="geneFontWeight" onchange="updatePlot()">
+                        <option value="normal">否</option>
+                        <option value="bold">是</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>最大基因数:</label>
+                    <input type="number" id="maxGenes" value="5" min="1" oninput="updatePlot()">
+                </div>
+            </div>
+            <label>标签宽度 (px, 决定换行):</label>
+            <input type="number" id="geneLabelWidth" value="200" oninput="updatePlot()" placeholder="增加宽度以减少换行">
+            <small style="display:block; margin-top:5px; color:#666;">基因标签内置于柱子**左侧 (贴近Y轴)**，并向右对齐。已移除所有省略符号。</small>
+        </div>
+    </div>
+
+
+    <div>
+        <div class="panel-header">5. 导出 (发表级)</div>
+        <div class="control-group">
+            <p><strong>推荐：</strong>下载 SVG 后用 Illustrator/PPT 编辑文字。</p>
+            <button class="btn btn-primary" onclick="downloadImage('svg')">下载 SVG (矢量/可编辑)</button>
+            <button class="btn btn-outline" onclick="downloadImage('png')">下载 PNG (高清图片)</button>
+        </div>
+    </div>
+</div>
+
+<div class="main">
+    <div id="plot-wrapper">
+        <div id="myDiv" style="width:100%; height:100%;"></div>
+    </div>
+</div>
+
+<script>
+    let rawData = [];
+    let highlightSet = new Set();
+    const plotContainer = document.getElementById('myDiv');
+    const statusDiv = document.getElementById('statusMessage');
+    let myChart = null;
+    let isCleanMode = false; // 控制轴文字显示/隐藏
+
+    // 初始化 ECharts 实例
+    window.onload = function() {
+        document.getElementById('fileInput').addEventListener('change', handleFile);
+        resizeContainer();
+        myChart = echarts.init(plotContainer, null, {
+            renderer: 'svg'
+        });
+        loadDemoData();
+    };
+
+    // 状态提示函数
+    function setStatus(message, isError = false) {
+        statusDiv.innerText = message;
+        statusDiv.className = isError ? 'status-error' : 'status-success';
+        if (!message) statusDiv.className = '';
+    }
+
+    // 1. 加载示例数据 (包含三列)
+    function loadDemoData() {
+        // 使用您提供的示例数据
+        const text = `ECM-receptor interaction\t0.471910112\tCol6a1/Col1a1/Itga3/Lamb1/Cd36/Cd44/Itga2/Lama5/Lama4/Col6a2/Hmmr/Itgb3/Col2a1/Thbs2/Lama3/Itga7/Fn1/Lamc2/Lamb3/Tnn/Itgav/Itga6/Tnc/Hspg2/Spp1/Col1a2/Gp9/Col4a5/Col4a1/Col4a2/Comp/Itga11/Col6a4/Itga2b/Sv2a/Itga9/Thbs1/Gp5/Col6a3/Gp1ba/Lamb2/Gp6
+p53 signaling pathway\t0.453333333\tCcnd2/Ccne1/Bbc3/Bax/Bid/Bcl2l1/Gadd45b/Cdk1/Mdm2/Ccng1/Rrm2/Gadd45g/Tnfrsf10b/Gtse1/Cdkn1a/Pmaip1/Pidd1/Zmat3/Ccne2/Sesn2/Ccng2/Rchy1/Chek1/Ccnb2/Gadd45a/Serpine1/Thbs1/Ppp1r13l/Ccnb1/Cdkn2a/Sfn/Bcl2/Ei24/Ccnd1
+Hippo signaling pathway\t0.37037037\tTead3/Wwc1/Lats2/Ajuba/Wwtr1/Wtip/Fat4/Frmd6/Yap1/Tead1
+TGF-beta signaling pathway\t0.357142857\tLtbp1/Id3/Smurf2/Dcn/Id2/Tgfb3/Id4/Fst/Bmpr1a/Myc/Tfrc/Bambi/Tnf/Smad7/Acvr1/Fbn1/Bmp2/Skil/Smad9/Smad1/Bmp5/Thsd4/Neo1/Smad3/Trf/Bmp8a/Amh/Smad6/Inhbb/Tgfb2/Thbs1/Nbl1/Inhba/Fmod/Id1/Lemd3/Grem2/Cdkn2b/Grem1/Lrrc32
+Thiamine metabolism\t0.333333333\tWnt9a/Ccnd2/Tcf7/Bbc3/Tead3/Fzd3/Ppp1cb/Wnt11/Birc5/Wwc1/Ccn2/Apc2/Id2/Tgfb3/Nkd2/Dlg5/Bmpr1a/Lats2/Wnt5a/Ajuba/Fzd6/Myc/Snai2/Wnt10b/Tcf7l2/Pard3/Smad7/Bmp2/Wwtr1/Wnt2b/Lef1/Smad1/Bmp5/Smad3/Bmp8a/Amh/Wtip/Wnt4/Fzd8/Serpine1/Tgfb2/Fzd7/Id1/Pard6b/Fzd1/Fzd5/Frmd6/Fzd4/Fzd2/Ywhag/Yap1/Afp/Tead1/Patj/Ccnd1
+Wnt signaling pathway\t0.308571429\tAk8/Ak1/Ak4/Alpl/Ak5
+PI3K-Akt signaling pathway\t0.250000000\tFn1/Pik3r1/Pik3cd/Pik3ca/Akt1/Tsc2/Foxo1/Gsk3b/Mapk1/Mapk3/Mtor/Bad/Cbl/Pten/Mdm2/Eif4e/Raptor/Rictor
+Endocytosis\t0.180000000\tCltc/Ehd1/Dnm2/Rme8/Tnf/Mapk1/Mapk3/Nedd4/Eps15/Hrs/Rab5/Vps35/Sort1/Arrb2/Egf/Tfr`;
+        document.getElementById('dataInput').value = text;
+
+        highlightSet.clear();
+        highlightSet.add("ECM-receptor interaction");
+        highlightSet.add("p53 signaling pathway");
+
+        // 将最大基因数设置为 5
+        document.getElementById('maxGenes').value = 5;
+
+        parseData();
+    };
+
+    // 2. 解析与排序数据 (支持三列)
+    function parseData() {
+        setStatus("正在解析数据...", false);
+        try {
+            const text = document.getElementById('dataInput').value.trim();
+            const lines = text.split('\n');
+            rawData = [];
+
+            lines.forEach((line, index) => {
+                // 尝试用制表符或逗号分隔，并允许第三列为空
+                let parts = line.split(/\t/);
+
+                if(parts.length < 2) {
+                     // 尝试用逗号分隔，以兼容 CSV 格式
+                     parts = line.split(/,/);
+                }
+
+                if(parts.length >= 2) {
+                    let name = parts[0].trim();
+                    let val = parseFloat(parts[1].replace(/[^\d.-]/g, ''));
+                    // 假设第三部分是基因列表，如果不存在则为空字符串
+                    let genes = parts.length > 2 ? parts[2].trim() : '';
+
+                    if(name && !isNaN(val)) {
+                        rawData.push({name: name, value: val, genes: genes});
+                    } else if (name) {
+                         console.warn(`Skipped line ${index + 1}: Could not parse score for "${name}".`);
+                    }
+                }
+            });
+
+            if (rawData.length === 0) {
+                 throw new Error("数据为空或无法解析。请检查格式：至少需要两列（名称和分数）。");
+            }
+
+            // 排序逻辑
+            const order = document.getElementById('sortOrder').value;
+            if(order === 'asc') {
+                rawData.sort((a,b) => a.value - b.value); // 短在下 (升序)
+            } else {
+                rawData.sort((a,b) => b.value - a.value); // 长在下 (降序)
+            }
+
+            renderHighlightList();
+            updatePlot();
+            setStatus(`成功加载 ${rawData.length} 条数据 (含基因列表)。`, false);
+
+        } catch (error) {
+            console.error("Data parsing error:", error);
+            setStatus(`解析失败: ${error.message}`, true);
+        }
+    }
+
+    // 3. 渲染高亮复选框列表 (不变)
+    function renderHighlightList() {
+        const listDiv = document.getElementById('highlight-list');
+        listDiv.innerHTML = "";
+
+        rawData.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'hl-item';
+
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.checked = highlightSet.has(item.name);
+            chk.onchange = (e) => {
+                if(e.target.checked) highlightSet.add(item.name);
+                else highlightSet.delete(item.name);
+                updatePlot();
+            };
+
+            const span = document.createElement('span');
+            span.innerText = item.name;
+
+            div.appendChild(chk);
+            div.appendChild(span);
+            listDiv.appendChild(div);
+        });
+    }
+
+    // 4. 清洁模式切换函数 (控制轴文字显示/隐藏)
+    function toggleCleanMode() {
+        isCleanMode = !isCleanMode;
+        const btn = document.getElementById('clearAxisBtn');
+        if (isCleanMode) {
+            btn.innerText = '恢复轴信息 (当前：隐藏)';
+            btn.className = 'btn btn-success';
+        } else {
+            btn.innerText = '清除/恢复轴信息 (当前：显示)';
+            btn.className = 'btn btn-danger';
+        }
+        updatePlot();
+    }
+
+    // 5. 格式化基因列表 (严格限制前 N 个，不显示任何省略符)
+    function formatGeneLabel(geneString, maxGenes) {
+        if (!geneString) return '';
+
+        // 统一分隔符，并去除可能出现的空字符串
+        let genes = geneString.split(/[\/,]/).map(g => g.trim()).filter(g => g.length > 0);
+
+        // 严格只取前 maxGenes 个基因
+        const displayedGenes = genes.slice(0, maxGenes);
+
+        let labelText = displayedGenes.join('/');
+
+        // ECharts富文本换行通过 width 属性控制
+        return `{gene|${labelText}}`;
+    }
+
+    // 6. 核心绘图函数 (V10.8 - 基因标签可隐藏)
+    function updatePlot() {
+        try {
+            if (!myChart || rawData.length === 0) {
+                 if(rawData.length === 0) setStatus("等待数据输入...", false);
+                 myChart.clear();
+                 return;
+            }
+
+            const xVals = rawData.map(d => d.value);
+            const yVals = rawData.map(d => d.name);
+
+            // 获取用户设置的颜色和样式
+            const colorStart = document.getElementById('gradientStartColor').value;
+            const colorEnd = document.getElementById('gradientEndColor').value;
+            const hlColor = document.getElementById('hlColor').value;
+            const norColor = document.getElementById('norColor').value;
+
+            const yFontSize = parseInt(document.getElementById('yFontSize').value);
+            const barWidth = document.getElementById('barWidth').value + '%';
+
+            const geneColor = document.getElementById('geneColor').value;
+            const geneFontSize = parseInt(document.getElementById('geneFontSize').value);
+            const geneFontWeight = document.getElementById('geneFontWeight').value;
+            const maxGenes = parseInt(document.getElementById('maxGenes').value);
+            const geneLabelWidth = parseInt(document.getElementById('geneLabelWidth').value);
+
+            // 获取手动设置的布局留白值
+            const gridLeft = document.getElementById('gridLeft').value + 'px';
+            const gridBottom = document.getElementById('gridBottom').value + 'px';
+
+
+            // --- 动态配置，受 Clean Mode 影响 ---
+            const titleText = isCleanMode ? '' : document.getElementById('mainTitle').value;
+
+            // 轴文字显示/隐藏
+            const showAxisLabels = !isCleanMode;
+            const xAxisName = isCleanMode ? '' : document.getElementById('xAxisTitle').value;
+
+            // 基因标签显示/隐藏
+            const showGeneLabel = !document.getElementById('hideGeneLabel').checked; // V10.8 新增
+
+            // 计算数据的范围 (用于 visualMap)
+            const minValue = Math.min(...xVals);
+            const maxValue = Math.max(...xVals);
+
+
+            // Y轴通路名称的富文本样式
+            const yAxisRichStyles = yVals.reduce((acc, name) => {
+                const isHighlight = highlightSet.has(name);
+                const color = isHighlight ? hlColor : norColor;
+                const weight = isHighlight ? 'bold' : 'normal';
+
+                const key = isHighlight ? 'highlight' : 'normal';
+
+                if (!acc[key]) {
+                    acc[key] = {
+                        color: color,
+                        fontSize: yFontSize,
+                        fontWeight: weight,
+                        fontFamily: 'Arial',
+                        align: 'left'
+                    };
+                }
+                return acc;
+            }, {});
+
+            // 基因标签的富文本样式
+            const geneLabelRichStyle = {
+                gene: {
+                    color: geneColor,
+                    fontSize: geneFontSize,
+                    fontWeight: geneFontWeight,
+                    fontFamily: 'Arial',
+                    width: geneLabelWidth,
+                    align: 'left',
+                    padding: [0, 0, 0, 5]
+                }
+            };
+
+            // 合并富文本样式
+            const combinedRich = Object.assign({}, yAxisRichStyles, geneLabelRichStyle);
+
+
+            // 配置 ECharts 选项
+            const option = {
+                // 1. visualMap: 视觉映射组件，根据数值自动着色
+                visualMap: {
+                    show: false,
+                    min: minValue,
+                    max: maxValue,
+                    dimension: 0,
+                    inRange: {
+                        color: [colorStart, colorEnd]
+                    }
+                },
+                title: {
+                    text: titleText,
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 18,
+                        fontFamily: 'Arial'
+                    }
+                },
+                grid: {
+                    // 保持固定像素值锁定布局，防止缩放
+                    left: gridLeft,
+                    right: '10%',
+                    top: '10%',
+                    bottom: gridBottom,
+                    containLabel: false
+                },
+                xAxis: {
+                    type: 'value',
+                    name: xAxisName,
+                    nameLocation: 'middle',
+                    nameGap: 30,
+                    axisLabel: {
+                         show: showAxisLabels,
+                         fontFamily: 'Arial'
+                    },
+                    nameTextStyle: {
+                        fontFamily: 'Arial',
+                        fontSize: 14,
+                        fontWeight: 'bold'
+                    },
+                    axisLine: {
+                        show: true,
+                        onZero: false,
+                        lineStyle: {
+                            color: '#333'
+                        }
+                    },
+                    axisTick: { show: showAxisLabels },
+                    splitLine: { show: false }
+                },
+                yAxis: {
+                    type: 'category',
+                    data: yVals,
+                    name: '',
+                    axisLabel: {
+                        show: showAxisLabels,
+                        interval: 0,
+                        formatter: function(value) {
+                            const key = highlightSet.has(value) ? 'highlight' : 'normal';
+                            return `{${key}|${value}}`;
+                        },
+                        rich: combinedRich,
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#333'
+                        }
+                    },
+                    axisTick: { show: false },
+                    splitLine: { show: false }
+                },
+                series: [
+                    {
+                        type: 'bar',
+                        data: rawData.map(item => item.value),
+                        barWidth: barWidth,
+                        label: {
+                            show: showGeneLabel, // V10.8 关键控制点
+                            position: 'insideLeft',
+                            distance: 0,
+                            formatter: function(params) {
+                                const dataIndex = params.dataIndex;
+                                const geneString = rawData[dataIndex].genes;
+                                return formatGeneLabel(geneString, maxGenes);
+                            },
+                            rich: combinedRich,
+                            backgroundColor: 'transparent',
+                            padding: [0, 0],
+                            textShadowColor: 'rgba(0, 0, 0, 0.5)',
+                            textShadowBlur: 2,
+                        },
+                    }
+                ],
+                toolbox: { show: false }
+            };
+
+            myChart.setOption(option);
+            setStatus(`图表绘制成功! 轴文字: ${showAxisLabels ? '显示' : '隐藏'}, 基因标签: ${showGeneLabel ? '显示' : '隐藏'}.`, false);
+
+        } catch (error) {
+            console.error("ECharts drawing error:", error);
+            setStatus(`绘图失败: ${error.message}`, true);
+        }
+    }
+
+    // 7. 调整容器大小 (不变)
+    function resizeContainer() {
+        const w = document.getElementById('plotWidth').value;
+        const h = document.getElementById('plotHeight').value;
+        const wrapper = document.getElementById('plot-wrapper');
+
+        wrapper.style.width = w + 'px';
+        wrapper.style.height = h + 'px';
+
+        if (myChart) {
+            myChart.resize({ width: w, height: h });
+        }
+    }
+
+    // 8. 下载功能 (不变)
+    function downloadImage(format) {
+        if (!myChart) {
+             alert("图表未初始化，无法导出。");
+             return;
+        }
+
+        const filename = 'KEGG_Enrichment_' + new Date().getTime();
+
+        if (format === 'svg') {
+            const svgData = myChart.getDataURL({
+                type: 'svg',
+                pixelRatio: 2,
+                backgroundColor: 'white'
+            });
+            const a = document.createElement('a');
+            a.href = svgData.replace('image/svg+xml', 'image/svg+xml;charset=utf-8');
+            a.download = filename + '.svg';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        else if (format === 'png') {
+            const pngData = myChart.getDataURL({
+                type: 'png',
+                pixelRatio: 3,
+                backgroundColor: 'white'
+            });
+            const a = document.createElement('a');
+            a.href = pngData;
+            a.download = filename + '.png';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    }
+
+    // 9. 处理 Excel 上传 (支持三列)
+    function handleFile(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const data = new Uint8Array(evt.target.result);
+            if (typeof XLSX === 'undefined') {
+                setStatus("SheetJS 库加载失败，无法解析 Excel 文件。请检查网络。", true);
+                return;
+            }
+            const wb = XLSX.read(data, {type: 'array'});
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const json = XLSX.utils.sheet_to_json(ws, {header: 1});
+
+            let str = "";
+            json.forEach(row => {
+                // 确保至少有通路名称和分数
+                if(row.length >= 2) {
+                    const geneList = row.length >= 3 ? row[2] : ''; // 捕获第三列
+                    str += row[0] + "\t" + row[1] + "\t" + geneList + "\n";
+                }
+            });
+            document.getElementById('dataInput').value = str;
+            parseData();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,432 @@
+/* =====================================================
+   步骤指示器样式
+   Stepper Component
+   ===================================================== */
+
+.stepper {
+  position: relative;
+  padding: var(--spacing-xl) 0;
+}
+
+.stepper-track {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--border-light);
+  transform: translateY(-50%);
+  z-index: 0;
+}
+
+.stepper-progress {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  height: 2px;
+  background: var(--color-primary);
+  transform: translateY(-50%);
+  z-index: 0;
+  transition: width var(--duration-slow) var(--ease-out);
+}
+
+.stepper-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  text-align: center;
+  flex: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.stepper-indicator {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-base);
+  border: 2px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-tertiary);
+  transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
+}
+
+/* 待处理状态 */
+.stepper-step.pending .stepper-indicator {
+  background: var(--bg-base);
+  border-color: var(--border-light);
+  color: var(--text-tertiary);
+}
+
+/* 进行中状态 */
+.stepper-step.active .stepper-indicator {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--text-inverse);
+  box-shadow: 0 0 0 4px var(--color-primary-light);
+}
+
+.stepper-step.active .stepper-indicator::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid var(--color-primary);
+  animation: stepper-pulse 2s ease-out infinite;
+}
+
+@keyframes stepper-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* 已完成状态 */
+.stepper-step.completed .stepper-indicator {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: var(--text-inverse);
+}
+
+.stepper-step.completed .stepper-indicator::after {
+  content: '✓';
+  font-size: 18px;
+}
+
+/* 错误状态 */
+.stepper-step.error .stepper-indicator {
+  background: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--text-inverse);
+}
+
+.stepper-step.error .stepper-indicator::after {
+  content: '✕';
+  font-size: 18px;
+}
+
+/* 步骤标签 */
+.stepper-label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.stepper-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-tertiary);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.stepper-step.active .stepper-title {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.stepper-step.completed .stepper-title {
+  color: var(--color-success);
+}
+
+.stepper-step.error .stepper-title {
+  color: var(--color-error);
+}
+
+.stepper-subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+/* 步骤内容区域 */
+.stepper-content {
+  margin-top: var(--spacing-2xl);
+  padding: var(--spacing-xl);
+  background: var(--bg-base);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  min-height: 300px;
+}
+
+.stepper-pane {
+  display: none;
+  animation: fade-in var(--duration-normal) var(--ease-out);
+}
+
+.stepper-pane.active {
+  display: block;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 步骤操作栏 */
+.stepper-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-light);
+  gap: var(--spacing-md);
+}
+
+.stepper-actions-left,
+.stepper-actions-right {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* 垂直步骤指示器 */
+.stepper-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--spacing-lg) 0;
+}
+
+.stepper-vertical .stepper-track {
+  top: 0;
+  left: 20px;
+  width: 2px;
+  height: 100%;
+  transform: none;
+}
+
+.stepper-vertical .stepper-progress {
+  top: 0;
+  left: 20px;
+  width: 2px;
+  height: 100%;
+  transform: none;
+}
+
+.stepper-vertical .stepper-steps {
+  flex-direction: column;
+  gap: 0;
+}
+
+.stepper-vertical .stepper-step {
+  flex-direction: row;
+  text-align: left;
+  padding: var(--spacing-lg) 0;
+  gap: var(--spacing-lg);
+}
+
+.stepper-vertical .stepper-indicator {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+.stepper-vertical .stepper-label {
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+}
+
+/* 紧凑型步骤指示器 */
+.stepper-compact .stepper-indicator {
+  width: 32px;
+  height: 32px;
+  font-size: var(--font-size-sm);
+}
+
+.stepper-compact .stepper-title {
+  font-size: var(--font-size-xs);
+}
+
+.stepper-compact .stepper-subtitle {
+  display: none;
+}
+
+/* 带图标的步骤指示器 */
+.stepper-icon .stepper-indicator {
+  font-size: 0;
+}
+
+.stepper-step.completed.stepper-icon .stepper-indicator::before,
+.stepper-step.error.stepper-icon .stepper-indicator::before {
+  content: '';
+  display: none;
+}
+
+.stepper-icon .stepper-indicator::after {
+  content: attr(data-icon);
+  font-size: 18px;
+}
+
+/* 步骤编号 */
+.stepper-numbered .stepper-indicator::before {
+  content: attr(data-step);
+  position: absolute;
+  font-size: var(--font-size-sm);
+}
+
+.stepper-step.completed.stepper-numbered .stepper-indicator::before,
+.stepper-step.error.stepper-numbered .stepper-indicator::before {
+  display: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 767px) {
+  .stepper-steps {
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+  }
+
+  .stepper-step {
+    min-width: calc(50% - var(--spacing-md));
+  }
+
+  .stepper-subtitle {
+    display: none;
+  }
+
+  .stepper-actions {
+    flex-direction: column-reverse;
+  }
+
+  .stepper-actions-left,
+  .stepper-actions-right {
+    width: 100%;
+  }
+
+  .stepper-actions .btn {
+    width: 100%;
+  }
+
+  /* 移动端自动切换为垂直布局 */
+  .stepper:not(.stepper-vertical) {
+    flex-direction: column;
+  }
+
+  .stepper:not(.stepper-vertical) .stepper-track,
+  .stepper:not(.stepper-vertical) .stepper-progress {
+    display: none;
+  }
+
+  .stepper:not(.stepper-vertical) .stepper-steps {
+    flex-direction: column;
+  }
+
+  .stepper:not(.stepper-vertical) .stepper-step {
+    flex-direction: row;
+    text-align: left;
+    padding: var(--spacing-md) 0;
+    width: 100%;
+  }
+
+  .stepper:not(.stepper-vertical) .stepper-indicator {
+    margin-left: 0;
+  }
+}
+
+/* 可访问性 */
+.stepper-step:focus .stepper-indicator {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.stepper-step[tabindex]:hover {
+  cursor: pointer;
+}
+
+/* 可点击的步骤 */
+.stepper-clickable .stepper-step {
+  cursor: pointer;
+}
+
+.stepper-clickable .stepper-step:hover .stepper-indicator {
+  border-color: var(--color-primary);
+}
+
+/* 禁用状态 */
+.stepper-step.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* 进度百分比指示器 */
+.stepper-percentage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-primary);
+  background: var(--bg-base);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+}
+
+/* 小型步骤指示器 */
+.stepper-sm .stepper-indicator {
+  width: 32px;
+  height: 32px;
+  font-size: var(--font-size-sm);
+}
+
+.stepper-sm .stepper-title {
+  font-size: var(--font-size-xs);
+}
+
+/* 大型步骤指示器 */
+.stepper-lg .stepper-indicator {
+  width: 48px;
+  height: 48px;
+  font-size: var(--font-size-lg);
+}
+
+.stepper-lg .stepper-title {
+  font-size: var(--font-size-base);
+}
+
+.stepper-lg .stepper-subtitle {
+  font-size: var(--font-size-sm);
+}
+
+/* 步骤跳转指示器 */
+.stepper-jump {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.stepper-jump:hover {
+  background: var(--color-primary);
+  color: var(--text-inverse);
+}
