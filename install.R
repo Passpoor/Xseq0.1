@@ -94,15 +94,8 @@ cat(sprintf("\n📊 安装完成: 新安装 %d 个, 跳过 %d 个\n", installed_
 cat("\n📥 下载 Xseq...\n")
 
 # 获取项目目录
-if (!interactive()) {
-  # 非交互模式，使用当前目录
-  install_dir <- getwd()
-} else {
-  # 交互模式，询问用户
-  install_dir <- getwd()
-}
-
-xseq_dir <- file.path(install_dir, "Xseq")
+install_dir <- getwd()
+xseq_dir <- file.path(install_dir, "Xseq0.1")
 
 # 检查是否已存在
 if (dir.exists(xseq_dir)) {
@@ -110,41 +103,89 @@ if (dir.exists(xseq_dir)) {
   cat("   正在更新...\n")
 
   # 尝试 git pull
-  tryCatch({
+  result <- tryCatch({
     setwd(xseq_dir)
-    system("git pull")
+    system("git pull", intern = TRUE)
     setwd(install_dir)
+    TRUE
   }, error = function(e) {
+    setwd(install_dir)
+    FALSE
+  })
+
+  if (!result) {
     cat("   无法更新，将重新下载\n")
     unlink(xseq_dir, recursive = TRUE)
-  })
+  }
 }
 
-if (!dir.exists(xseq_dir)) {
-  # 克隆仓库
+# 下载函数
+download_xseq <- function() {
+  # 方法1: 尝试 git clone
   repo_url <- "https://github.com/Passpoor/Xseq0.1.git"
 
+  git_result <- system2("git", c("clone", repo_url, xseq_dir), wait = TRUE)
+
+  if (git_result == 0 && dir.exists(xseq_dir)) {
+    return(TRUE)
+  }
+
+  cat("   Git 克隆失败，尝试下载 ZIP...\n")
+
+  # 清理失败的目录
+  if (dir.exists(xseq_dir)) {
+    unlink(xseq_dir, recursive = TRUE)
+  }
+
+  # 方法2: 下载 ZIP
+  zip_url <- "https://github.com/Passpoor/Xseq0.1/archive/refs/heads/master.zip"
+  zip_file <- file.path(install_dir, "Xseq0.1.zip")
+
   tryCatch({
-    system(sprintf("git clone %s %s", repo_url, xseq_dir))
-    cat(sprintf("✅ 下载完成: %s\n", xseq_dir))
+    download.file(zip_url, zip_file, mode = "wb")
+    unzip(zip_file, exdir = install_dir)
+
+    # 重命名解压后的目录
+    extracted_dir <- file.path(install_dir, "Xseq0.1-master")
+    if (dir.exists(extracted_dir)) {
+      file.rename(extracted_dir, xseq_dir)
+    }
+
+    # 删除 ZIP 文件
+    unlink(zip_file)
+
+    if (dir.exists(xseq_dir)) {
+      return(TRUE)
+    }
+    return(FALSE)
   }, error = function(e) {
-    # 如果没有 git，尝试下载 zip
-    cat("   Git 不可用，尝试下载 ZIP...\n")
-
-    zip_url <- "https://github.com/Passpoor/Xseq0.1/archive/refs/heads/main.zip"
-    zip_file <- file.path(install_dir, "Xseq.zip")
-
-    tryCatch({
-      download.file(zip_url, zip_file)
-      unzip(zip_file, exdir = install_dir)
-      file.rename(file.path(install_dir, "Xseq-main"), xseq_dir)
-      unlink(zip_file)
-      cat(sprintf("✅ 下载完成: %s\n", xseq_dir))
-    }, error = function(e2) {
-      stop("下载失败，请手动从 GitHub 下载: https://github.com/Passpoor/Xseq0.1")
-    })
+    cat(sprintf("   ZIP 下载失败: %s\n", e$message))
+    return(FALSE)
   })
 }
+
+# 执行下载
+if (!dir.exists(xseq_dir)) {
+  success <- download_xseq()
+
+  if (!success || !dir.exists(xseq_dir)) {
+    cat("\n❌ 自动下载失败！\n")
+    cat("\n请手动下载：\n")
+    cat("  1. 访问: https://github.com/Passpoor/Xseq0.1\n")
+    cat("  2. 点击绿色按钮 'Code' -> 'Download ZIP'\n")
+    cat("  3. 解压到当前目录\n")
+    cat("  4. 重命名文件夹为 'Xseq0.1'\n")
+    cat("  5. 运行: setwd('Xseq0.1'); source('launch_app.R')\n")
+    stop("下载失败，请手动下载")
+  }
+}
+
+# 验证下载
+if (!dir.exists(xseq_dir)) {
+  stop("项目目录不存在，下载可能失败")
+}
+
+cat(sprintf("✅ 下载完成: %s\n", xseq_dir))
 
 # =====================================================
 # 启动应用
