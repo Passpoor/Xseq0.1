@@ -88,7 +88,7 @@ for (pkg in required_packages) {
 cat(sprintf("\n📊 安装完成: 新安装 %d 个, 跳过 %d 个\n", installed_count, skipped_count))
 
 # =====================================================
-# 下载项目（优先使用 ZIP，更可靠）
+# 下载项目
 # =====================================================
 
 cat("\n📥 下载 Xseq...\n")
@@ -99,62 +99,77 @@ xseq_dir <- file.path(install_dir, "Xseq0.1")
 
 # 删除旧的下载（如果存在且不完整）
 if (dir.exists(xseq_dir)) {
-  # 检查是否有 app.R 文件
   if (!file.exists(file.path(xseq_dir, "app.R"))) {
     cat("   删除不完整的下载...\n")
     unlink(xseq_dir, recursive = TRUE)
   }
 }
 
-# 下载函数（使用 ZIP）
+# 下载函数
 download_xseq <- function() {
-  zip_url <- "https://codeload.github.com/Passpoor/Xseq0.1/zip/refs/heads/master"
   zip_file <- file.path(install_dir, "Xseq0.1.zip")
 
-  cat("   正在下载 ZIP 文件...\n")
+  # 尝试多个下载地址
+  zip_urls <- c(
+    "https://hub.gitmirror.com/https://github.com/Passpoor/Xseq0.1/archive/refs/heads/master.zip",
+    "https://ghproxy.com/https://github.com/Passpoor/Xseq0.1/archive/refs/heads/master.zip",
+    "https://github.com/Passpoor/Xseq0.1/archive/refs/heads/master.zip"
+  )
 
-  tryCatch({
-    # 下载 ZIP
-    download.file(zip_url, zip_file, mode = "wb", quiet = FALSE)
+  for (i in seq_along(zip_urls)) {
+    zip_url <- zip_urls[i]
+    cat(sprintf("   尝试下载源 %d...\n", i))
 
-    # 检查文件大小
-    file_size <- file.info(zip_file)$size
-    if (is.na(file_size) || file_size < 10000) {
-      cat("   ⚠️ 下载的文件太小，可能不完整\n")
-      return(FALSE)
-    }
+    tryCatch({
+      # 设置更长的超时时间
+      options(timeout = 300)
 
-    cat(sprintf("   下载完成 (%.1f MB)\n", file_size / 1024 / 1024))
+      # 下载 ZIP
+      download.file(zip_url, zip_file, mode = "wb", quiet = FALSE)
 
-    # 解压
-    cat("   正在解压...\n")
-    unzip(zip_file, exdir = install_dir, overwrite = TRUE)
-
-    # 重命名解压后的目录
-    extracted_dir <- file.path(install_dir, "Xseq0.1-master")
-    if (dir.exists(extracted_dir)) {
-      # 如果目标目录已存在，先删除
-      if (dir.exists(xseq_dir)) {
-        unlink(xseq_dir, recursive = TRUE)
+      # 检查文件大小
+      file_size <- file.info(zip_file)$size
+      if (is.na(file_size) || file_size < 10000) {
+        cat("   ⚠️ 下载的文件太小，可能不完整\n")
+        unlink(zip_file)
+        next
       }
-      file.rename(extracted_dir, xseq_dir)
-    }
 
-    # 删除 ZIP 文件
-    unlink(zip_file)
+      cat(sprintf("   下载完成 (%.1f MB)\n", file_size / 1024 / 1024))
 
-    # 验证
-    if (file.exists(file.path(xseq_dir, "app.R"))) {
-      return(TRUE)
-    }
+      # 解压
+      cat("   正在解压...\n")
+      unzip(zip_file, exdir = install_dir, overwrite = TRUE)
 
-    cat("   ⚠️ 解压后找不到 app.R 文件\n")
-    return(FALSE)
+      # 重命名解压后的目录
+      extracted_dir <- file.path(install_dir, "Xseq0.1-master")
+      if (dir.exists(extracted_dir)) {
+        if (dir.exists(xseq_dir)) {
+          unlink(xseq_dir, recursive = TRUE)
+        }
+        file.rename(extracted_dir, xseq_dir)
+      }
 
-  }, error = function(e) {
-    cat(sprintf("   ❌ 下载失败: %s\n", e$message))
-    return(FALSE)
-  })
+      # 删除 ZIP 文件
+      unlink(zip_file)
+
+      # 验证
+      if (file.exists(file.path(xseq_dir, "app.R"))) {
+        return(TRUE)
+      }
+
+      cat("   ⚠️ 解压后找不到 app.R 文件\n")
+      return(FALSE)
+
+    }, error = function(e) {
+      cat(sprintf("   ❌ 下载失败: %s\n", e$message))
+      if (file.exists(zip_file)) {
+        unlink(zip_file)
+      }
+    })
+  }
+
+  return(FALSE)
 }
 
 # 执行下载
