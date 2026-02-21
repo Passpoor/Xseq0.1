@@ -88,7 +88,7 @@ for (pkg in required_packages) {
 cat(sprintf("\n📊 安装完成: 新安装 %d 个, 跳过 %d 个\n", installed_count, skipped_count))
 
 # =====================================================
-# 下载项目
+# 下载项目（优先使用 ZIP，更可靠）
 # =====================================================
 
 cat("\n📥 下载 Xseq...\n")
@@ -97,92 +97,83 @@ cat("\n📥 下载 Xseq...\n")
 install_dir <- getwd()
 xseq_dir <- file.path(install_dir, "Xseq0.1")
 
-# 检查是否已存在
+# 删除旧的下载（如果存在且不完整）
 if (dir.exists(xseq_dir)) {
-  cat(sprintf("📁 发现已有安装: %s\n", xseq_dir))
-  cat("   正在更新...\n")
-
-  # 尝试 git pull
-  result <- tryCatch({
-    setwd(xseq_dir)
-    system("git pull", intern = TRUE)
-    setwd(install_dir)
-    TRUE
-  }, error = function(e) {
-    setwd(install_dir)
-    FALSE
-  })
-
-  if (!result) {
-    cat("   无法更新，将重新下载\n")
+  # 检查是否有 app.R 文件
+  if (!file.exists(file.path(xseq_dir, "app.R"))) {
+    cat("   删除不完整的下载...\n")
     unlink(xseq_dir, recursive = TRUE)
   }
 }
 
-# 下载函数
+# 下载函数（使用 ZIP）
 download_xseq <- function() {
-  # 方法1: 尝试 git clone
-  repo_url <- "https://github.com/Passpoor/Xseq0.1.git"
-
-  git_result <- system2("git", c("clone", repo_url, xseq_dir), wait = TRUE)
-
-  if (git_result == 0 && dir.exists(xseq_dir)) {
-    return(TRUE)
-  }
-
-  cat("   Git 克隆失败，尝试下载 ZIP...\n")
-
-  # 清理失败的目录
-  if (dir.exists(xseq_dir)) {
-    unlink(xseq_dir, recursive = TRUE)
-  }
-
-  # 方法2: 下载 ZIP
-  zip_url <- "https://github.com/Passpoor/Xseq0.1/archive/refs/heads/master.zip"
+  zip_url <- "https://codeload.github.com/Passpoor/Xseq0.1/zip/refs/heads/master"
   zip_file <- file.path(install_dir, "Xseq0.1.zip")
 
+  cat("   正在下载 ZIP 文件...\n")
+
   tryCatch({
-    download.file(zip_url, zip_file, mode = "wb")
-    unzip(zip_file, exdir = install_dir)
+    # 下载 ZIP
+    download.file(zip_url, zip_file, mode = "wb", quiet = FALSE)
+
+    # 检查文件大小
+    file_size <- file.info(zip_file)$size
+    if (is.na(file_size) || file_size < 10000) {
+      cat("   ⚠️ 下载的文件太小，可能不完整\n")
+      return(FALSE)
+    }
+
+    cat(sprintf("   下载完成 (%.1f MB)\n", file_size / 1024 / 1024))
+
+    # 解压
+    cat("   正在解压...\n")
+    unzip(zip_file, exdir = install_dir, overwrite = TRUE)
 
     # 重命名解压后的目录
     extracted_dir <- file.path(install_dir, "Xseq0.1-master")
     if (dir.exists(extracted_dir)) {
+      # 如果目标目录已存在，先删除
+      if (dir.exists(xseq_dir)) {
+        unlink(xseq_dir, recursive = TRUE)
+      }
       file.rename(extracted_dir, xseq_dir)
     }
 
     # 删除 ZIP 文件
     unlink(zip_file)
 
-    if (dir.exists(xseq_dir)) {
+    # 验证
+    if (file.exists(file.path(xseq_dir, "app.R"))) {
       return(TRUE)
     }
+
+    cat("   ⚠️ 解压后找不到 app.R 文件\n")
     return(FALSE)
+
   }, error = function(e) {
-    cat(sprintf("   ZIP 下载失败: %s\n", e$message))
+    cat(sprintf("   ❌ 下载失败: %s\n", e$message))
     return(FALSE)
   })
 }
 
 # 执行下载
-if (!dir.exists(xseq_dir)) {
+if (!dir.exists(xseq_dir) || !file.exists(file.path(xseq_dir, "app.R"))) {
   success <- download_xseq()
 
-  if (!success || !dir.exists(xseq_dir)) {
+  if (!success || !file.exists(file.path(xseq_dir, "app.R"))) {
     cat("\n❌ 自动下载失败！\n")
-    cat("\n请手动下载：\n")
+    cat("\n========================================\n")
+    cat("请手动下载：\n\n")
     cat("  1. 访问: https://github.com/Passpoor/Xseq0.1\n")
     cat("  2. 点击绿色按钮 'Code' -> 'Download ZIP'\n")
-    cat("  3. 解压到当前目录\n")
-    cat("  4. 重命名文件夹为 'Xseq0.1'\n")
-    cat("  5. 运行: setwd('Xseq0.1'); source('launch_app.R')\n")
+    cat("  3. 解压 ZIP 文件\n")
+    cat("  4. 将文件夹 'Xseq0.1-master' 重命名为 'Xseq0.1'\n")
+    cat("  5. 在 RStudio 中打开该文件夹\n")
+    cat("  6. 运行: source('launch_app.R')\n")
+    cat("========================================\n")
     stop("下载失败，请手动下载")
   }
-}
-
-# 验证下载
-if (!dir.exists(xseq_dir)) {
-  stop("项目目录不存在，下载可能失败")
 }
 
 cat(sprintf("✅ 下载完成: %s\n", xseq_dir))
