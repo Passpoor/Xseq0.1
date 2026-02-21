@@ -28,7 +28,6 @@ licenses.json
 .license_cache.rds
 .machine_code.rds
 .usage_count.rds
-license_admin.R
 
 # Logs
 omnipathr-log/
