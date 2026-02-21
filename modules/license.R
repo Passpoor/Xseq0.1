@@ -10,7 +10,7 @@
 
 # 授权列表远程地址（GitHub 私有仓库 raw 链接）
 # 需要替换为你的实际仓库地址
-LICENSE_URL <- Sys.getenv("XSEQ_LICENSE_URL", "https://raw.githubusercontent.com/Passpoor/Xseq-license/main/licenses.json")
+LICENSE_URL <- Sys.getenv("XSEQ_LICENSE_URL", "https://raw.githubusercontent.com/Passpoor/Xseq_do/main/licenses.json")
 
 # 本地缓存文件
 LICENSE_CACHE_FILE <- ".license_cache.rds"
