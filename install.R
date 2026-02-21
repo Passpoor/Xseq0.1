@@ -2,7 +2,7 @@
 # Xseq 一键安装脚本
 # =====================================================
 # 用户使用方式：
-# source("https://raw.githubusercontent.com/Passpoor/Xseq/main/install.R")
+# source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/main/install.R")
 # =====================================================
 
 cat("
@@ -122,7 +122,7 @@ if (dir.exists(xseq_dir)) {
 
 if (!dir.exists(xseq_dir)) {
   # 克隆仓库
-  repo_url <- "https://github.com/Passpoor/Xseq.git"
+  repo_url <- "https://github.com/Passpoor/Xseq0.1.git"
 
   tryCatch({
     system(sprintf("git clone %s %s", repo_url, xseq_dir))
@@ -131,7 +131,7 @@ if (!dir.exists(xseq_dir)) {
     # 如果没有 git，尝试下载 zip
     cat("   Git 不可用，尝试下载 ZIP...\n")
 
-    zip_url <- "https://github.com/Passpoor/Xseq/archive/refs/heads/main.zip"
+    zip_url <- "https://github.com/Passpoor/Xseq0.1/archive/refs/heads/main.zip"
     zip_file <- file.path(install_dir, "Xseq.zip")
 
     tryCatch({
@@ -141,7 +141,7 @@ if (!dir.exists(xseq_dir)) {
       unlink(zip_file)
       cat(sprintf("✅ 下载完成: %s\n", xseq_dir))
     }, error = function(e2) {
-      stop("下载失败，请手动从 GitHub 下载: https://github.com/Passpoor/Xseq")
+      stop("下载失败，请手动从 GitHub 下载: https://github.com/Passpoor/Xseq0.1")
     })
   })
 }

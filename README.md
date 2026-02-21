@@ -22,17 +22,17 @@
 Run this command in R/RStudio:
 
 ```r
-source("https://raw.githubusercontent.com/Passpoor/Xseq/main/install.R")
+source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/main/install.R")
 ```
 
 ### Manual Install
 
 ```bash
 # Clone the repository
-git clone https://github.com/Passpoor/Xseq.git
+git clone https://github.com/Passpoor/Xseq0.1.git
 
 # Run the application
-cd Xseq
+cd Xseq0.1
 Rscript -e "shiny::runApp('app.R')"
 ```
 
@@ -76,7 +76,7 @@ The installer will automatically install required packages:
 ## Contact
 
 - Email: xseq_fastfreee@163.com
-- GitHub: [https://github.com/Passpoor/Xseq](https://github.com/Passpoor/Xseq)
+- GitHub: [https://github.com/Passpoor/Xseq0.1](https://github.com/Passpoor/Xseq0.1)
 
 ## License
 
@@ -89,7 +89,7 @@ If you use Xseq in your research, please cite:
 ```
 Xseq: A web-based platform for bioinformatics analysis
 文献计量与基础医学
-https://github.com/Passpoor/Xseq
+https://github.com/Passpoor/Xseq0.1
 ```
 
 ---
