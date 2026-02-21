@@ -2,7 +2,7 @@
 # Xseq 一键安装脚本
 # =====================================================
 # 用户使用方式：
-# source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/main/install.R")
+# source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/master/install.R")
 # =====================================================
 
 cat("

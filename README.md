@@ -22,7 +22,7 @@
 Run this command in R/RStudio:
 
 ```r
-source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/main/install.R")
+source("https://raw.githubusercontent.com/Passpoor/Xseq0.1/master/install.R")
 ```
 
 ### Manual Install
