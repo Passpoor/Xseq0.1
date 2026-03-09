@@ -1,0 +1,184 @@
+# =====================================================
+# BioFastFree Snakemake Workflow
+# 转录组差异分析与功能富集 - 可复现命令行流程
+# 对应 BioFastFree Shiny 应用的逻辑架构
+# =====================================================
+
+configfile: "config/config.yaml"
+
+# 路径变量
+OUTPUT_DIR = config["output"]["dir"]
+PREFIX = config["output"]["prefix"]
+SCRIPT_DIR = "scripts"
+
+# 输入文件
+INPUT_COUNTS = config["input"]["counts"]
+INPUT_DESIGN = config["input"]["design"]
+
+# 输出文件路径
+DEG_FILE = f"{OUTPUT_DIR}/{PREFIX}_deg_results.csv"
+VOLCANO_PDF = f"{OUTPUT_DIR}/{PREFIX}_volcano.pdf"
+KEGG_CSV = f"{OUTPUT_DIR}/{PREFIX}_kegg_enrichment.csv"
+KEGG_PDF = f"{OUTPUT_DIR}/{PREFIX}_kegg_dotplot.pdf"
+GO_CSV = f"{OUTPUT_DIR}/{PREFIX}_go_enrichment.csv"
+GO_PDF = f"{OUTPUT_DIR}/{PREFIX}_go_dotplot.pdf"
+GSEA_CSV = f"{OUTPUT_DIR}/{PREFIX}_gsea_results.csv"
+GSEA_PDF = f"{OUTPUT_DIR}/{PREFIX}_gsea_ridge.pdf"
+TF_CSV = f"{OUTPUT_DIR}/{PREFIX}_tf_activity.csv"
+TF_PDF = f"{OUTPUT_DIR}/{PREFIX}_tf_activity.pdf"
+
+# =====================================================
+# Rule: 差异分析 (limma-voom / edgeR)
+# =====================================================
+rule differential_analysis:
+    input:
+        counts = INPUT_COUNTS,
+        design = INPUT_DESIGN
+    output:
+        deg = DEG_FILE
+    params:
+        species = config["species"],
+        pval_cutoff = config["differential"]["pval_cutoff"],
+        log2fc_cutoff = config["differential"]["log2fc_cutoff"],
+        method = config["differential"].get("method", "auto")
+    log:
+        f"{OUTPUT_DIR}/logs/differential_analysis.log"
+    shell:
+        "mkdir -p {OUTPUT_DIR}/logs && "
+        "Rscript {SCRIPT_DIR}/01_differential_analysis.R "
+        "--counts {input.counts} --design {input.design} "
+        "--output {output.deg} "
+        "--species {params.species} "
+        "--pval_cutoff {params.pval_cutoff} "
+        "--log2fc_cutoff {params.log2fc_cutoff} "
+        "--method {params.method} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# Rule: 火山图
+# =====================================================
+rule volcano_plot:
+    input:
+        deg = DEG_FILE
+    output:
+        pdf = VOLCANO_PDF
+    params:
+        pval_cutoff = config["differential"]["pval_cutoff"],
+        log2fc_cutoff = config["differential"]["log2fc_cutoff"]
+    log:
+        f"{OUTPUT_DIR}/logs/volcano.log"
+    shell:
+        "Rscript {SCRIPT_DIR}/02_volcano_plot.R "
+        "--deg {input.deg} --output {output.pdf} "
+        "--pval_cutoff {params.pval_cutoff} "
+        "--log2fc_cutoff {params.log2fc_cutoff} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# Rule: KEGG 富集
+# =====================================================
+rule kegg_enrichment:
+    input:
+        deg = DEG_FILE
+    output:
+        csv = KEGG_CSV,
+        pdf = KEGG_PDF
+    params:
+        species = config["kegg_species"],
+        direction = config["kegg"]["direction"],
+        pval_cutoff = config["kegg"]["pvalueCutoff"]
+    log:
+        f"{OUTPUT_DIR}/logs/kegg.log"
+    shell:
+        "Rscript {SCRIPT_DIR}/03_kegg_enrichment.R "
+        "--deg {input.deg} --output_csv {output.csv} --output_pdf {output.pdf} "
+        "--species {params.species} --direction {params.direction} "
+        "--pval_cutoff {params.pval_cutoff} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# Rule: GO 富集
+# =====================================================
+rule go_enrichment:
+    input:
+        deg = DEG_FILE
+    output:
+        csv = GO_CSV,
+        pdf = GO_PDF
+    params:
+        species = config["species"],
+        ontology = config["go"]["ontology"],
+        pval_cutoff = config["go"]["pvalueCutoff"]
+    log:
+        f"{OUTPUT_DIR}/logs/go.log"
+    shell:
+        "Rscript {SCRIPT_DIR}/04_go_enrichment.R "
+        "--deg {input.deg} --output_csv {output.csv} --output_pdf {output.pdf} "
+        "--species {params.species} --ontology {params.ontology} "
+        "--pval_cutoff {params.pval_cutoff} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# Rule: GSEA (需在 config 中设置 gsea.gmt_file)
+# 运行: snakemake results/biofastfree_gsea_results.csv
+# =====================================================
+rule gsea_analysis:
+    input:
+        deg = DEG_FILE,
+        gmt = config["gsea"]["gmt_file"]
+    output:
+        csv = GSEA_CSV,
+        pdf = GSEA_PDF
+    params:
+        pval_cutoff = config["gsea"]["pvalueCutoff"],
+        id_type = config["gsea"]["id_type"]
+    log:
+        f"{OUTPUT_DIR}/logs/gsea.log"
+    shell:
+        "Rscript {SCRIPT_DIR}/05_gsea_analysis.R "
+        "--deg {input.deg} --gmt {input.gmt} "
+        "--output_csv {output.csv} --output_pdf {output.pdf} "
+        "--pval_cutoff {params.pval_cutoff} --id_type {params.id_type} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# Rule: 转录因子活性
+# =====================================================
+rule tf_activity:
+    input:
+        deg = DEG_FILE
+    output:
+        csv = TF_CSV,
+        pdf = TF_PDF
+    params:
+        species = config["species"],
+        method = config["tf_activity"].get("method", "ulm"),
+        collectri_dir = config["tf_activity"].get("collectri_dir", ".")
+    log:
+        f"{OUTPUT_DIR}/logs/tf_activity.log"
+    shell:
+        "Rscript {SCRIPT_DIR}/06_tf_activity.R "
+        "--deg {input.deg} --output_csv {output.csv} --output_pdf {output.pdf} "
+        "--species {params.species} --method {params.method} "
+        "--collectri_dir {params.collectri_dir} "
+        "2>&1 | tee {log}"
+
+
+# =====================================================
+# 主目标：核心流程 (DEG -> 火山图 -> KEGG -> GO -> TF)
+# =====================================================
+rule all:
+    input:
+        DEG_FILE,
+        VOLCANO_PDF,
+        KEGG_CSV,
+        KEGG_PDF,
+        GO_CSV,
+        GO_PDF,
+        TF_CSV,
+        TF_PDF

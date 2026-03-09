@@ -1,0 +1,60 @@
+# R specific
+.Rhistory
+.RData
+.RDataTmp
+.Rproj.user
+.Renviron
+
+# User / project data - do not upload
+data/
+md/
+images/
+
+# Shiny specific
+rsconnect/
+shiny_score/
+shiny_app.*
+
+# Database
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+biofree_users.sqlite
+
+# Config files (API keys)
+zhipu_config.RData
+api_config.RData
+email_config.RData
+
+# Logs
+omnipathr-log/
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# OS specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test outputs
+test_*.rds
+test_*.pdf
+test_*.png
+test_*.csv
+
+# Documentation builds
+docs/_site/
+docs/.gitbook/
+
+# Claude specific
+.claude/

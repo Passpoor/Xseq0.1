@@ -1,0 +1,63 @@
+# =====================================================
+# BioFastFree Snakemake Workflow Configuration
+# 对应 BioFastFree Shiny 应用的命令行可复现流程
+# 路径相对于 workflow/ 目录
+# =====================================================
+
+# --- 输入数据 ---
+input:
+  counts: "data/counts.csv"      # Counts矩阵：首列=GeneID，其余列=样本counts
+  design: "data/design.csv"      # 实验设计：sample, group (Control/Treatment)
+  deg_file: null                 # 可选：预计算DEG文件路径，若设置则跳过差异分析
+
+# --- 差异分析参数 ---
+differential:
+  method: "auto"                 # auto/limma/edgeR (auto: 样本>=3用limma，否则edgeR)
+  pval_type: "padj"
+  pval_cutoff: 0.05
+  log2fc_cutoff: 1.0
+  edgeR_dispersion: 0.1
+
+# --- 物种与注释 ---
+species: "Mm"                    # Mm=小鼠, Hs=人类
+kegg_species: "mmu"              # KEGG: mmu/hsa
+
+# --- KEGG 富集 ---
+kegg:
+  direction: "Up"                # Up / Down / All
+  pvalueCutoff: 0.05
+  qvalueCutoff: 0.2
+
+# --- GO 富集 ---
+go:
+  ontology: "ALL"                # BP / MF / CC / ALL
+  pvalueCutoff: 0.05
+  qvalueCutoff: 0.2
+
+# --- GSEA (可选，需提供 gmt_file 后单独运行) ---
+gsea:
+  enabled: false
+  gmt_file: null                 # 如 "data/c2.cp.kegg.v7.5.1.symbols.gmt"
+  pvalueCutoff: 0.05
+  minGSSize: 10
+  maxGSSize: 500
+  id_type: "SYMBOL"
+
+# --- 转录因子活性 ---
+tf_activity:
+  enabled: true
+  method: "ulm"                  # ulm / mlm / wsum / viper
+  min_genes: 5
+  collectri_dir: "."             # CollecTRI 网络文件目录，可设为 Biofree_project 根目录
+
+# --- 火山图 ---
+volcano:
+  point_size: 6
+  point_alpha: 0.7
+  y_axis: "pvalue"
+  label_genes: []
+
+# --- 输出 ---
+output:
+  dir: "results"
+  prefix: "biofastfree"

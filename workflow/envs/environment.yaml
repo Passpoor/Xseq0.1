@@ -1,0 +1,28 @@
+# BioFastFree Snakemake - R 环境
+# 使用: conda env create -f envs/environment.yaml
+# 激活: conda activate biofastfree
+# 注: decoupleR 可能需在 R 中单独安装: install.packages("decoupleR")
+
+name: biofastfree
+
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - r-base>=4.2
+  - r-edgeR
+  - r-limma
+  - r-ggplot2
+  - r-dplyr
+  - r-tidyr
+  - r-tibble
+  - r-clusterprofiler
+  - bioconductor-org.mm.eg.db
+  - bioconductor-org.hs.eg.db
+  - bioconductor-annotationdbi
+  - r-ggrepel
+  - r-enrichplot
+  - python>=3.8
+  - snakemake>=7.0
