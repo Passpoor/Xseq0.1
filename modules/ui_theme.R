@@ -1429,6 +1429,7 @@ main_app_ui <- function(initial_theme) {
               "饮水思源 · 致谢 R/Bioconductor 及本平台所集成的开源包 | Thanks to R, Bioconductor & all integrated packages")
     )
   )
+)
 }
 
 

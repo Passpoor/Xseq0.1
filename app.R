@@ -55,8 +55,29 @@ suppressPackageStartupMessages({
 # 加载配置
 source("config/config.R")
 
+# #region agent log (debug)
+debug_log_ndjson <- function(location, message, data = list()) {
+  try({
+    line <- paste0(
+      "{\"sessionId\":\"aec83c\",\"timestamp\":", as.integer(Sys.time()) * 1000,
+      ",\"location\":\"", location,
+      "\",\"message\":\"", gsub("\"", "'", message),
+      "\",\"data\":", paste0("{", paste0(sprintf("\"%s\":\"%s\"", names(data), as.character(data)), collapse = ","), "}"),
+      "}\n"
+    )
+    cat(line, file = "debug-aec83c.log", append = TRUE)
+  }, silent = TRUE)
+}
+# #endregion
+
 # 加载核心模块
-source("modules/ui_theme.R")
+tryCatch({
+  source("modules/ui_theme.R")
+  debug_log_ndjson("app.R:source(ui_theme)", "ui_theme_loaded", list(ok = "true"))
+}, error = function(e) {
+  debug_log_ndjson("app.R:source(ui_theme)", "ui_theme_source_error", list(error = conditionMessage(e)))
+  stop(e)
+})
 source("modules/data_input.R")
 source("modules/differential_analysis.R")
 source("modules/kegg_enrichment.R")

@@ -28,6 +28,7 @@ email_config.RData
 
 # Logs
 omnipathr-log/
+debug-*.log
 
 # Temporary files
 *.tmp
