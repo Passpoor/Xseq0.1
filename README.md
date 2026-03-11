@@ -1,10 +1,13 @@
 # YuanSeq
 
-YuanSeq is a web-based R/Shiny platform for comprehensive bioinformatics analysis of RNA-seq and microarray data: differential expression (limma-voom / edgeR), functional enrichment (KEGG / GO / GSEA), transcription factor and pathway activity inference, and interactive visualization. Developed at Shanghai Jiao Tong University School of Pharmacy.
+YuanSeq is a web-based R/Shiny platform for comprehensive bioinformatics analysis
+RNA-seq and microarray data: differential expression (limma-voom / edgeR), functional enrichment (KEGG / GO / GSEA),
+transcription factor and pathway activity inference, **AI-powered interpretation**, and interactive visualization.
+Developed at Shanghai Jiao Tong University School of Pharmacy.
 
-**Repository:** [https://github.com/Passpoor/Xseq0.1](https://github.com/Passpoor/Xseq0.1)
+**Repository:** [https://github.com/Passpoor/Yuanseq](https://github.com/Passpoor/Yuanseq)
 
-**开发者 Developer:** 乔宇 Yu Qiao · 上海交通大学药学院 药理学博士 | School of Pharmacy, Shanghai Jiao Tong University · PhD in Pharmacology  
+**开发者 Developer:** 乔宇 Yu Qiao · 上海交通大学药学院 药理学博士 | School of Pharmacy, Shanghai Jiao Tong University · PhD in Pharmacology
 
 **导师 Supervisors:** [钱峰教授 Prof. Feng Qian](https://pharm.sjtu.edu.cn/szdy/2862.html)、[孙磊教授 Prof. Lei Sun](https://pharm.sjtu.edu.cn/szdy/2870.html)
 
@@ -25,6 +28,13 @@ YuanSeq（源Seq）为模块化生物信息学分析平台，基于 Shiny 开发
 - **转录因子活性**: CollecTRI 网络与 decoupleR
 - **韦恩图、火山图**: 多组交集、多种差异结果格式
 
+### 🆕 AI 解读功能
+- **多 API 支持**: OpenAI、DeepSeek、智谱AI (GLM)、本地模型、自定义 API
+- **智能解读**: 基于分析结果生成专业的生物学解读报告
+- **样本信息**: 支持输入物种、组织、处理条件等背景信息，生成针对性解读
+- **多格式导出**: Markdown、HTML（含嵌入图片）、PDF
+- **进度显示**: 实时显示分析进度
+
 ### 界面与扩展
 - 科幻主题、玻璃拟态、响应式布局
 - GSEA 模块内提示可配合 [GPSAdb](https://www.gpsadb.com/) fastGPSA 做延伸分析
@@ -39,8 +49,8 @@ YuanSeq（源Seq）为模块化生物信息学分析平台，基于 Shiny 开发
 
 ### 1. 克隆仓库
 ```bash
-git clone https://github.com/Passpoor/Xseq0.1.git
-cd Xseq0.1
+git clone https://github.com/Passpoor/Yuanseq.git
+cd Yuanseq
 ```
 
 ### 2. 安装 R 包
@@ -48,7 +58,8 @@ cd Xseq0.1
 ```r
 install.packages(c("shiny", "shinyjs", "bslib", "ggplot2", "dplyr", "DT",
   "pheatmap", "plotly", "colourpicker", "shinyWidgets", "rlang",
-  "tibble", "tidyr", "ggrepel", "RColorBrewer", "VennDiagram", "grid", "gridExtra"))
+  "tibble", "tidyr", "ggrepel", "RColorBrewer", "VennDiagram", "grid", "gridExtra",
+  "httr", "jsonlite", "base64enc"))
 
 if (!require("BiocManager", quietly = TRUE)) install.packages("BiocManager")
 BiocManager::install(c("edgeR", "limma", "AnnotationDbi", "clusterProfiler",
@@ -58,7 +69,38 @@ BiocManager::install(c("edgeR", "limma", "AnnotationDbi", "clusterProfiler",
 remotes::install_github("Passpoor/biofree.qyKEGGtools", upgrade = "never")
 ```
 
-### 3. 启动应用
+### 3. 配置 AI API（可选但推荐）
+
+复制配置模板并填入您的 API Key：
+```bash
+# Windows
+copy api_config.example.json %USERPROFILE%\.yuanseq\api_config.json
+
+# Mac/Linux
+mkdir -p ~/.yuanseq
+cp api_config.example.json ~/.yuanseq/api_config.json
+```
+
+编辑 `api_config.json`，填入您的 API Key：
+```json
+{
+  "provider": "deepseek",
+  "api_key": "您的API Key",
+  "model": "deepseek-chat"
+}
+```
+
+支持的 API 提供商：
+| 提供商 | provider 值 | 推荐模型 |
+|--------|-------------|----------|
+| DeepSeek | `deepseek` | deepseek-chat |
+| OpenAI | `openai` | gpt-4o |
+| 智谱AI | `zhipu` | glm-4-flash |
+| 本地模型 | `local` | custom |
+
+> ⚠️ **数据安全提示**: 使用外部 API 会将分析数据发送到第三方服务器。敏感数据请使用本地模型或企业版 API。
+
+### 4. 启动应用
 ```r
 shiny::runApp("app.R")
 ```
@@ -79,6 +121,7 @@ YuanSeq 为集成平台，未重复造轮子，依赖并致谢以下 R/Bioconduc
 | **通路与 TF** | [decoupleR](https://bioconductor.org/packages/decoupleR/) | 通路活性、转录因子活性推断 |
 | **可视化** | [ggplot2](https://cran.r-project.org/package=ggplot2), [pheatmap](https://cran.r-project.org/package=pheatmap), [ggrepel](https://cran.r-project.org/package=ggrepel), [RColorBrewer](https://cran.r-project.org/package=RColorBrewer), [VennDiagram](https://cran.r-project.org/package=VennDiagram), [grid](https://cran.r-project.org/package=grid), [gridExtra](https://cran.r-project.org/package=gridExtra) | 图表与排版 |
 | **数据处理** | [dplyr](https://cran.r-project.org/package=dplyr), [tibble](https://cran.r-project.org/package=tibble), [tidyr](https://cran.r-project.org/package=tidyr), [rlang](https://cran.r-project.org/package=rlang), [later](https://cran.r-project.org/package=later) | 数据整理与异步 |
+| **AI 功能** | [httr](https://cran.r-project.org/package=httr), [jsonlite](https://cran.r-project.org/package=jsonlite), [base64enc](https://cran.r-project.org/package=base64enc) | API 调用与数据导出 |
 
 芯片分析模块另用 [reshape2](https://cran.r-project.org/package=reshape2)、[sva](https://bioconductor.org/packages/sva/) 等。
 
@@ -90,6 +133,7 @@ YuanSeq 为集成平台，未重复造轮子，依赖并致谢以下 R/Bioconduc
 
 ```
 ├── app.R                 # 主入口
+├── api_config.example.json  # AI API 配置模板
 ├── config/               # 配置
 ├── modules/              # Shiny 模块
 │   ├── ui_theme.R        # 主题与布局
@@ -99,6 +143,7 @@ YuanSeq 为集成平台，未重复造轮子，依赖并致谢以下 R/Bioconduc
 │   ├── gsea_analysis.R
 │   ├── pathway_activity.R # 通路活性推断
 │   ├── tf_activity.R
+│   ├── ai_interpretation.R # AI 解读模块
 │   └── venn_diagram.R
 ├── workflow/             # 工作流脚本
 ├── tests/                # 测试
