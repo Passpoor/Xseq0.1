@@ -1,4 +1,5 @@
 Package: YuanSeq
+Type: Shiny
 Title: RNA-seq, Microarray and Single-Cell Downstream Analysis Platform
 Version: 1.0.0
 Date: 2026-03-11
