@@ -77,29 +77,32 @@ YuanSeq integrates AI-powered biological interpretation, supporting multiple LLM
 - R >= 4.0
 - RStudio (recommended)
 
-### Quick Start (One-Line Install)
+### 方式一：GitHub 一键安装 | Method 1: GitHub Install
+
+```r
+# 安装包 | Install package
+remotes::install_github("Passpoor/Yuanseq")
+
+# 启动应用（自动打开浏览器）| Launch app (auto-opens browser)
+YuanSeq::run_app()
+```
+
+### 方式二：本地安装 | Method 2: Local Install
 
 ```bash
-# Clone repository
 git clone https://github.com/Passpoor/Yuanseq.git
 cd Yuanseq
 ```
 
-Open R and run:
-
 ```r
-# 📦 Install all dependencies (one-line install)
+# 一键安装依赖 | One-line install dependencies
 source("install.R")
 
-# 🚀 Launch app (auto-opens browser)
+# 启动应用 | Launch app
 source("run.R")
 ```
 
-That's it! The app will automatically open in your default browser.
-
-### Manual Installation
-
-If you prefer manual installation:
+### 手动安装 | Manual Installation
 
 ```r
 # CRAN packages

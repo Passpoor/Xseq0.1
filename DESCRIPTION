@@ -1,0 +1,64 @@
+Package: YuanSeq
+Type: Shiny
+Title: RNA-seq, Microarray and Single-Cell Downstream Analysis Platform
+Version: 1.0.0
+Date: 2026-03-11
+Authors@R: c(
+    person("Yu", "Qiao", , "yu.qiao@sjtu.edu.cn", role = c("aut", "cre"),
+           comment = "PhD in Pharmacology, SJTU School of Pharmacy"),
+    person("Feng", "Qian", role = "ths", comment = "Supervisor"),
+    person("Lei", "Sun", role = "ths", comment = "Supervisor")
+    )
+Description: A comprehensive R/Shiny platform for RNA-seq, microarray and
+    single-cell cluster-derived pseudobulk downstream analysis. Supports
+    differential expression (limma-voom, edgeR), functional enrichment
+    (KEGG, GO, GSEA), pathway and TF activity inference (decoupleR),
+    and AI-powered biological interpretation.
+License: MIT + file LICENSE
+URL: https://github.com/Passpoor/Yuanseq
+BugReports: https://github.com/Passpoor/Yuanseq/issues
+Encoding: UTF-8
+LazyData: true
+NeedsCompilation: no
+Depends:
+    R (>= 4.0)
+Imports:
+    shiny,
+    shinyjs,
+    bslib,
+    ggplot2,
+    dplyr,
+    DT,
+    pheatmap,
+    plotly,
+    colourpicker,
+    shinyWidgets,
+    rlang,
+    tibble,
+    tidyr,
+    ggrepel,
+    RColorBrewer,
+    VennDiagram,
+    grid,
+    gridExtra,
+    httr,
+    jsonlite,
+    base64enc,
+    later,
+    tools
+Suggests:
+    edgeR,
+    limma,
+    AnnotationDbi,
+    clusterProfiler,
+    org.Mm.eg.db,
+    org.Hs.eg.db,
+    GseaVis,
+    enrichplot,
+    decoupleR,
+    sva,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+Config/testthat/edition: 3
