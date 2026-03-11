@@ -38,12 +38,23 @@
 
 ## 🚀 Installation & Launch
 
-### Quick Start (Recommended)
+### Quick Start
 
+| Operation | Code |
+|-----------|------|
+| **Install** | `remotes::install_github("Passpoor/Yuanseq", upgrade = "never")` |
+| **Update** | `remotes::install_github("Passpoor/Yuanseq", upgrade = "never", force = TRUE)` |
+| **Launch** | `YuanSeq::run_app()` |
+
+**First-time installation:**
 ```r
-# Install and launch YuanSeq
 if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
 remotes::install_github("Passpoor/Yuanseq", upgrade = "never")
+YuanSeq::run_app()
+```
+
+**Already installed? Just launch:**
+```r
 YuanSeq::run_app()
 ```
 
