@@ -14,422 +14,346 @@ library(bslib)
 # =====================================================
 
 sci_fi_css <- tags$style(HTML("
-/* 基础字体 - 添加微妙渐变背景 */
+
+/* =====================================================
+   🎨 YuanSeq UI Theme - 优化版（减少框线重叠）
+   ===================================================== */
+
+/* === 基础 === */
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(135deg, #F5F5F7 0%, #EFEFF4 50%, #F5F5F7 100%);  /* 🔥 添加微妙渐变 */
-    margin: 0;
-    padding: 0;
+    background: linear-gradient(135deg, #F0F2F5 0%, #E8EAF0 50%, #F0F2F5 100%);
+    margin: 0; padding: 0;
     font-size: 14px;
-    min-height: 100vh;  /* 🔥 确保背景覆盖整个视口 */
+    min-height: 100vh;
+    color: #1a1a2e;
 }
 
-/* 响应式字体大小 */
-@media (max-width: 1200px) {
-    body {
-        font-size: 13px;
-    }
-}
+/* 响应式字体 */
+@media (max-width: 1200px) { body { font-size: 13px; } }
+@media (max-width: 768px)  { body { font-size: 12px; } }
+@media (max-width: 480px)  { body { font-size: 11px; } }
 
-@media (max-width: 768px) {
-    body {
-        font-size: 12px;
-    }
-}
+/* === 页脚链接 === */
+.xseq-developer-footer a { color: #0d6efd; text-decoration: none; }
+.xseq-developer-footer a:hover { text-decoration: underline; }
+.dark-mode .xseq-developer-footer a { color: #6ea8fe; }
 
-@media (max-width: 480px) {
-    body {
-        font-size: 11px;
-    }
-}
-
-/* 开发者页脚链接 */
-.xseq-developer-footer a {
-    color: #0d6efd;
-    text-decoration: none;
-}
-.xseq-developer-footer a:hover {
-    text-decoration: underline;
-}
-.dark-mode .xseq-developer-footer a {
-    color: #6ea8fe;
-}
-
-/* 夜间模式 - 添加微妙渐变背景 */
+/* === 夜间模式基础 === */
 .dark-mode {
-    background: linear-gradient(135deg, #1C1C1E 0%, #252528 50%, #1C1C1E 100%) !important;  /* 🔥 深色模式渐变 */
+    background: linear-gradient(135deg, #1C1C1E 0%, #252528 50%, #1C1C1E 100%) !important;
     color: #FFFFFF !important;
     min-height: 100vh;
 }
 
-/* 夜间模式下的所有元素 */
+/* 夜间模式文字 */
 .dark-mode,
 .dark-mode body,
-.dark-mode .navbar,
-.dark-mode .sidebar-panel,
-.dark-mode .main-panel,
-.dark-mode .well-panel,
-.dark-mode .tab-pane,
-.dark-mode .shiny-html-output,
-.dark-mode .container-fluid,
-.dark-mode .shiny-text-output,
-.dark-mode .form-group,
-.dark-mode .control-label,
-.dark-mode .help-block,
-.dark-mode .text-muted,
-.dark-mode .radio,
-.dark-mode .checkbox,
-.dark-mode .well,
-.dark-mode .panel,
-.dark-mode .panel-body {
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4, .dark-mode h5, .dark-mode h6,
+.dark-mode p, .dark-mode span, .dark-mode div, .dark-mode label,
+.dark-mode .control-label, .dark-mode .help-block, .dark-mode .text-muted,
+.dark-mode .radio, .dark-mode .checkbox {
     color: #FFFFFF !important;
     background-color: #1C1C1E !important;
 }
 
-/* 所有文本元素强制白色 */
-.dark-mode h1,
-.dark-mode h2,
-.dark-mode h3,
-.dark-mode h4,
-.dark-mode h5,
-.dark-mode h6,
-.dark-mode p,
-.dark-mode span,
-.dark-mode div,
-.dark-mode label {
+/* 夜间模式 Shiny 组件 */
+.dark-mode .navbar,
+.dark-mode .sidebar-panel, .dark-mode .main-panel, .dark-mode .well-panel, .dark-mode .tab-pane,
+.dark-mode .shiny-html-output, .dark-mode .shiny-text-output,
+.dark-mode .shiny-bound-output, .dark-mode .shiny-plot-output, .dark-mode .shiny-table-output,
+.dark-mode .container-fluid, .dark-mode .form-group,
+.dark-mode .well, .dark-mode .panel, .dark-mode .panel-body {
     color: #FFFFFF !important;
+    background-color: #1C1C1E !important;
 }
 
-/* 文件上传组件 */
+/* 夜间模式文件上传 */
 .dark-mode .shiny-input-container,
-.dark-mode .form-group,
-.dark-mode .control-label {
-    color: #FFFFFF !important;
-}
-
-.dark-mode .shiny-file-input-label,
-.dark-mode .input-group-addon {
-    color: #FFFFFF !important;
-    background-color: #2C2C2E !important;
-    border-color: #444444 !important;
-}
-
-/* 按钮组 */
-.dark-mode .btn-group,
+.dark-mode .shiny-file-input-label, .dark-mode .input-group-addon,
+.dark-mode .btn-file, .dark-mode .file-input-wrapper, .dark-mode .file-input-name,
+.dark-mode .file-input, .dark-mode .shiny-bound-input,
+.dark-mode .shiny-file-input-progress, .dark-mode .progress-text,
+.dark-mode .download-button, .dark-mode .shiny-download-link,
 .dark-mode .btn-group .btn {
     color: #FFFFFF !important;
 }
 
-/* 下载按钮 */
-.dark-mode .download-button,
-.dark-mode .shiny-download-link {
-    color: #FFFFFF !important;
-}
-
-/* 文件浏览区域 */
-.dark-mode .file-input,
-.dark-mode .shiny-bound-input {
-    color: #FFFFFF !important;
-}
-
-/* 进度条 */
-.dark-mode .progress,
-.dark-mode .progress-bar {
-    background-color: #2C2C2E !important;
-    color: #FFFFFF !important;
-}
-
-/* Shiny特定组件 */
-.dark-mode .shiny-bound-output,
-.dark-mode .shiny-html-output,
-.dark-mode .shiny-text-output,
-.dark-mode .shiny-plot-output,
-.dark-mode .shiny-table-output {
-    color: #FFFFFF !important;
-    background-color: #1C1C1E !important;
-}
-
-/* 文件上传进度 */
-.dark-mode .shiny-file-input-progress,
-.dark-mode .progress-text {
-    color: #FFFFFF !important;
-}
-
-/* 文件上传按钮 */
-.dark-mode .btn-file {
-    color: #FFFFFF !important;
+.dark-mode .shiny-file-input-label, .dark-mode .input-group-addon {
     background-color: #2C2C2E !important;
     border-color: #444444 !important;
 }
 
-/* 文件上传区域 */
-.dark-mode .file-input-wrapper,
-.dark-mode .file-input-name {
+.dark-mode .btn-file {
+    background-color: #2C2C2E !important;
+    border-color: #444444 !important;
+}
+
+.dark-mode .progress, .dark-mode .progress-bar {
+    background-color: #2C2C2E !important;
     color: #FFFFFF !important;
 }
 
-/* 下载链接 */
-.dark-mode a[download],
-.dark-mode .shiny-download-link a {
-    color: #0A84FF !important;
+.dark-mode .shiny-plot-output, .dark-mode .shiny-html-output, .dark-mode .shiny-text-output {
+    background-color: #1C1C1E !important;
 }
 
-
-/* 输入框特殊处理 */
-.dark-mode .form-control,
-.dark-mode .selectize-input {
+/* 夜间模式输入框（保持浅色便于阅读）*/
+.dark-mode .form-control, .dark-mode .selectize-input {
     color: #000000 !important;
     background-color: #FFFFFF !important;
 }
+.dark-mode select { color: #000000 !important; background-color: #FFFFFF !important; }
+.dark-mode select option { color: #000000 !important; background-color: #FFFFFF !important; }
+.dark-mode .btn { color: #FFFFFF !important; }
 
-.dark-mode select {
-    color: #000000 !important;
-    background-color: #FFFFFF !important;
-}
-
-/* 下拉菜单选项样式 */
-.dark-mode select option {
-    color: #000000 !important;
-    background-color: #FFFFFF !important;
-}
-
-/* Selectize下拉菜单选项样式 */
-.dark-mode .selectize-dropdown {
-    background-color: #FFFFFF !important;
-    border: 1px solid #444444 !important;
-}
-
-.dark-mode .selectize-dropdown .option {
-    color: #000000 !important;
-    background-color: #FFFFFF !important;
-}
-
-.dark-mode .selectize-dropdown .option:hover {
-    background-color: #F0F0F0 !important;
-    color: #000000 !important;
-}
-
-.dark-mode .selectize-dropdown .active {
-    background-color: #007AFF !important;
-    color: #FFFFFF !important;
-}
-
-/* 按钮 */
-.dark-mode .btn {
-    color: #FFFFFF !important;
-}
-
-/* 表格 */
-.dark-mode table,
-.dark-mode th,
-.dark-mode td {
+/* 夜间模式表格 */
+.dark-mode table, .dark-mode th, .dark-mode td {
     color: #FFFFFF !important;
     background-color: #2C2C2E !important;
 }
 
-/* 标签页 */
-.dark-mode .nav-tabs .nav-link {
-    color: #CCCCCC !important;
-}
+/* 夜间模式下拉 */
+.dark-mode .selectize-dropdown { background-color: #FFFFFF !important; border: 1px solid #444444 !important; }
+.dark-mode .selectize-dropdown .option { color: #000000 !important; background-color: #FFFFFF !important; }
+.dark-mode .selectize-dropdown .option:hover { background-color: #F0F0F0 !important; color: #000000 !important; }
+.dark-mode .selectize-dropdown .active { background-color: #007AFF !important; color: #FFFFFF !important; }
 
-.dark-mode .nav-tabs .nav-link.active {
-    color: #0A84FF !important;
-}
+/* 夜间模式链接 */
+.dark-mode a[download], .dark-mode .shiny-download-link a { color: #0A84FF !important; }
 
-.dark-mode .nav-tabs .nav-link:hover {
-    color: #FFFFFF !important;
-}
+/* 标签页（夜间） */
+.dark-mode .nav-tabs .nav-link { color: #CCCCCC !important; }
+.dark-mode .nav-tabs .nav-link.active { color: #0A84FF !important; border-bottom-color: #0A84FF !important; }
+.dark-mode .nav-tabs .nav-link:hover { color: #FFFFFF !important; }
 
+/* 链接 */
 a { color: #007AFF; }
 .dark-mode a { color: #0A84FF; }
 
+/* =====================================================
+   🔧 核心优化：减少框线重叠
+   ===================================================== */
 
-/* 导航栏 - 简化效果提升速度 */
+/* === 导航栏 === */
 .navbar {
-    background-color: rgba(255,255,255,0.95) !important;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    background-color: rgba(255,255,255,0.97) !important;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 .dark-mode .navbar {
-    background-color: rgba(28,28,30,0.95) !important;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    background-color: rgba(28,28,30,0.97) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
 }
-.navbar-brand, .nav-link {
-    color: #111 !important;
-    font-weight: 500;
-}
-.dark-mode .navbar-brand, .dark-mode .nav-link {
-    color: #F2F2F7 !important;
-}
+.navbar-brand, .nav-link { color: #111 !important; font-weight: 500; }
+.dark-mode .navbar-brand, .dark-mode .nav-link { color: #F2F2F7 !important; }
 
-/* 面板 - 增强阴影效果提升视觉层次 */
-.sidebar-panel, .main-panel, .well-panel, .tab-pane {
-    background-color: #FFFFFF !important;
-    border-radius: 14px;
-    padding: 20px;
+/* === 侧边栏面板 - 轻量化，无额外边框 === */
+.sidebar-panel {
+    background-color: rgba(255,255,255,0.92) !important;
+    border-radius: 16px;
+    padding: 20px 18px;
     border: 1px solid rgba(0,0,0,0.06);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);  /* 🔥 增强阴影：更明显更有层次 */
-    transition: box-shadow 0.3s ease;  /* 🔥 添加柔和过渡效果 */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 0;
+    /* 🔥 移除 hover 效果，避免视觉过重 */
 }
 
-/* 面板hover效果 */
-.sidebar-panel:hover, .main-panel:hover, .well-panel:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.12);  /* 🔥 hover时阴影更深 */
+.dark-mode .sidebar-panel {
+    background-color: rgba(44,44,46,0.95) !important;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 
-.dark-mode .sidebar-panel,
-.dark-mode .main-panel,
-.dark-mode .well-panel,
-.dark-mode .tab-pane {
-    background-color: #2C2C2E !important;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);  /* 🔥 增强深色模式阴影 */
-    transition: box-shadow 0.3s ease;
+/* === 主内容面板 - 轻量化，无额外边框 === */
+.main-panel {
+    background-color: rgba(255,255,255,0.92) !important;
+    border-radius: 16px;
+    padding: 22px 20px;
+    border: 1px solid rgba(0,0,0,0.06);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
 }
 
-.dark-mode .sidebar-panel:hover,
-.dark-mode .main-panel:hover,
-.dark-mode .well-panel:hover {
-    box-shadow: 0 6px 24px rgba(0,0,0,0.7);  /* 🔥 深色模式hover效果 */
+.dark-mode .main-panel {
+    background-color: rgba(44,44,46,0.95) !important;
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
 }
 
-/* 按钮 */
+/* === well-panel 和 tab-pane - 完全透明，避免框线叠加 === */
+.well-panel, .tab-pane {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 10px 0 !important;
+    box-shadow: none !important;
+    margin-bottom: 0;
+}
+
+.dark-mode .well-panel, .dark-mode .tab-pane {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* === wellPanel()：内嵌的well容器 - 轻量化 === */
+.well {
+    background-color: rgba(246,248,250,0.8) !important;
+    border: 1px solid rgba(0,0,0,0.06) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    box-shadow: none !important;  /* 🔥 移除well的阴影，避免双重阴影 */
+    margin-bottom: 15px;
+}
+
+.dark-mode .well {
+    background-color: rgba(58,58,60,0.8) !important;
+    border: 1px solid rgba(255,255,255,0.06) !important;
+    box-shadow: none !important;
+}
+
+/* === 按钮 === */
 .btn {
-    border-radius: 10px !important;
+    border-radius: 9px !important;
     padding: 8px 14px !important;
     font-weight: 500 !important;
     border: none !important;
     font-size: 14px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-/* 响应式按钮字体大小 */
-@media (max-width: 1200px) {
-    .btn {
-        font-size: 13px !important;
-        padding: 7px 12px !important;
-    }
-}
+@media (max-width: 1200px) { .btn { font-size: 13px !important; padding: 7px 12px !important; } }
+@media (max-width: 768px)  { .btn { font-size: 12px !important; padding: 6px 10px !important; } }
+@media (max-width: 480px)  { .btn { font-size: 11px !important; padding: 5px 8px !important; } }
 
-@media (max-width: 768px) {
-    .btn {
-        font-size: 12px !important;
-        padding: 6px 10px !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .btn {
-        font-size: 11px !important;
-        padding: 5px 8px !important;
-    }
-}
 .btn-primary { background-color: #007AFF !important; color: white !important; }
+.btn-success { background-color: #34C759 !important; color: white !important; }
+.btn-warning { background-color: #FF9F0A !important; color: white !important; }
+.btn-info    { background-color: #5AC8FA !important; color: white !important; }
+
 .dark-mode .btn-primary { background-color: #0A84FF !important; }
 
-.btn-success { background-color: #34C759 !important; color: white !important; }
-.btn-warning { background-color: #FF9F0A !important; }
-.btn-info { background-color: #5AC8FA !important; }
-
-/* 🔥 增强按钮hover效果 - 添加transform和阴影 */
+/* 按钮悬停效果（轻量化） */
 .btn:hover {
-    transform: translateY(-2px);  /* 🔥 向上浮动 */
-    box-shadow: 0 4px 12px rgba(0,122,255,0.3);  /* 🔥 添加阴影 */
-    opacity: 1;  /* 🔥 不再降低opacity */
+    transform: translateY(-1px) !important;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15) !important;
+    opacity: 1 !important;
 }
+.btn-primary:hover { box-shadow: 0 3px 8px rgba(0,122,255,0.3) !important; }
+.btn-success:hover { box-shadow: 0 3px 8px rgba(52,199,89,0.3) !important; }
+.btn-warning:hover { box-shadow: 0 3px 8px rgba(255,159,10,0.3) !important; }
+.btn-info:hover    { box-shadow: 0 3px 8px rgba(90,200,250,0.3) !important; }
+.dark-mode .btn:hover { box-shadow: 0 3px 8px rgba(10,132,255,0.4) !important; }
 
-.btn-primary:hover {
-    box-shadow: 0 4px 12px rgba(0,122,255,0.4);
-}
-
-.btn-success:hover {
-    box-shadow: 0 4px 12px rgba(52,199,89,0.4);
-}
-
-.btn-warning:hover {
-    box-shadow: 0 4px 12px rgba(255,159,10,0.4);
-}
-
-.btn-info:hover {
-    box-shadow: 0 4px 12px rgba(90,200,250,0.4);
-}
-
-/* 深色模式按钮hover */
-.dark-mode .btn:hover {
-    box-shadow: 0 4px 12px rgba(10,132,255,0.5);
-}
-
-.dark-mode .btn-primary:hover {
-    box-shadow: 0 4px 12px rgba(10,132,255,0.6);
-}
-
-/* 输入框 - 移除过渡效果提升速度 */
+/* === 输入框 === */
 .form-control, .selectize-input {
-    background-color: #FAFAFC !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-    height: 38px;
-}
-
-/* 下拉菜单选项样式 */
-select option {
-    color: #000000 !important;
-    background-color: #FFFFFF !important;
-}
-
-/* Selectize下拉菜单选项样式 */
-.selectize-dropdown {
-    background-color: #FFFFFF !important;
+    background-color: #F8F9FC !important;
+    border-radius: 9px !important;
     border: 1px solid rgba(0,0,0,0.1) !important;
+    box-shadow: none !important;  /* 🔥 移除内阴影 */
+    height: 38px;
+    transition: border-color 0.15s ease !important;
 }
 
-.selectize-dropdown .option {
-    color: #000000 !important;
-    background-color: #FFFFFF !important;
-}
+/* 下拉选项 */
+select option { color: #000000 !important; background-color: #FFFFFF !important; }
+.selectize-dropdown { background-color: #FFFFFF !important; border: 1px solid rgba(0,0,0,0.1) !important; border-radius: 9px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important; }
+.selectize-dropdown .option { color: #000000 !important; background-color: #FFFFFF !important; }
+.selectize-dropdown .option:hover { background-color: #F0F0F0 !important; color: #000000 !important; }
+.selectize-dropdown .active { background-color: #007AFF !important; color: #FFFFFF !important; }
 
-.selectize-dropdown .option:hover {
-    background-color: #F0F0F0 !important;
-    color: #000000 !important;
-}
-
-.selectize-dropdown .active {
-    background-color: #007AFF !important;
-    color: #FFFFFF !important;
-}
 .form-control:focus, .selectize-input.focus {
     border-color: #007AFF !important;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+    box-shadow: 0 0 0 2px rgba(0,122,255,0.12) !important;  /* 🔥 减小focus光环 */
 }
-.dark-mode .form-control,
-.dark-mode .selectize-input {
+
+.dark-mode .form-control, .dark-mode .selectize-input {
     background-color: #3A3A3C !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
     color: #F2F2F7 !important;
+    box-shadow: none !important;
 }
 .dark-mode .form-control:focus {
     border-color: #0A84FF !important;
-    box-shadow: 0 0 0 3px rgba(10,132,255,0.2);
+    box-shadow: 0 0 0 2px rgba(10,132,255,0.15) !important;
 }
 
-/* 标签页 */
+/* === 标签页（顶层导航）=== */
+.nav-tabs {
+    border-bottom: 1px solid rgba(0,0,0,0.1) !important;
+    margin-bottom: 0;
+}
 .nav-tabs .nav-link {
     border: none !important;
     padding: 10px 16px !important;
     color: #6E6E73;
+    background: transparent !important;
+    border-radius: 0 !important;
+    margin-bottom: -1px;
 }
 .nav-tabs .nav-link.active {
     color: #007AFF !important;
-    border-bottom: 3px solid #007AFF !important;
-    background: transparent !important;
+    border-bottom: 2px solid #007AFF !important;  /* 🔥 精简为2px，原为3px */
+    background: rgba(0,122,255,0.04) !important;  /* 🔥 极淡背景 */
     font-weight: 600;
+    border-radius: 6px 6px 0 0 !important;
 }
 .dark-mode .nav-tabs .nav-link.active {
     color: #0A84FF !important;
-    border-bottom: 3px solid #0A84FF !important;
+    border-bottom: 2px solid #0A84FF !important;
+    background: rgba(10,132,255,0.07) !important;
 }
 
-/* DataTable */
+/* === 分割线 - 渐变效果 === */
+hr {
+    border: none !important;
+    height: 1px !important;
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.08), transparent) !important;
+    margin: 18px 0 !important;
+}
+.dark-mode hr {
+    background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent) !important;
+}
+
+/* === DataTable === */
 .dataTables_wrapper { color: #111 !important; }
 .dark-mode .dataTables_wrapper { color: #F2F2F7 !important; }
+
+/* 移除表格过多边框 */
+table.dataTable {
+    border-collapse: collapse !important;
+}
+table.dataTable thead th {
+    border-bottom: 2px solid rgba(0,0,0,0.08) !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: transparent !important;
+}
+table.dataTable tbody td {
+    border-top: 1px solid rgba(0,0,0,0.04) !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: none !important;
+}
+.dark-mode table.dataTable thead th {
+    border-bottom: 2px solid rgba(255,255,255,0.08) !important;
+}
+.dark-mode table.dataTable tbody td {
+    border-top: 1px solid rgba(255,255,255,0.05) !important;
+    background-color: transparent !important;
+}
+
+/* === Panel - hover效果取消，避免视觉不稳 === */
+.sidebar-panel:hover, .main-panel:hover, .well-panel:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06) !important;  /* 🔥 保持不变，不做hover增强 */
+    transform: none !important;
+}
+.dark-mode .sidebar-panel:hover, .dark-mode .main-panel:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
+}
 
 "))
 
