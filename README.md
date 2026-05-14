@@ -92,7 +92,7 @@ Edit `api_config.json` with your API key:
 
 ---
 
-### Alternative 1: Local Install
+### 方式一：本地安装
 
 ```bash
 git clone https://github.com/Passpoor/Yuanseq.git
@@ -100,41 +100,41 @@ cd Yuanseq
 ```
 
 ```r
-source("install.R")  # Install dependencies
-source("run.R")      # Launch app
+source("install.R")  # 安装依赖包
+source("run.R")      # 启动应用
 ```
 
-### Alternative 2: Pixi (Recommended for reproducible environments)
+### 方式二：Pixi 管理（推荐，可复现环境）
 
-[Pixi](https://pixi.sh/) provides cross-platform, lockfile-based environment management using conda-forge and bioconda packages.
+[Pixi](https://pixi.sh/) 是一款跨平台的包管理工具，基于 conda-forge 和 bioconda 提供锁定版本的环境管理。
 
-**Prerequisites:** [Install pixi](https://pixi.sh/latest/#installation)
+**前置条件：** [安装 pixi](https://pixi.sh/latest/#installation)
 
 ```bash
 git clone https://github.com/Passpoor/Yuanclaw.git
 cd Yuanclaw
 
-# Install all dependencies
+# 安装所有依赖
 pixi install
 
-# First-time setup: link R config + install extra packages
+# 首次设置：配置 R 环境并安装额外包
 pixi run setup
 
-# Launch the app
+# 启动应用
 pixi run app
 ```
 
-**Available commands:**
+**可用命令：**
 
-| Command | Description |
-|---------|-------------|
-| `pixi install` | Install conda/bioconda dependencies |
-| `pixi run setup` | First-time setup (R config + extras) |
-| `pixi run app` | Launch Shiny app on port 3838 |
-| `pixi run test` | Run tests |
-| `pixi run check-r` | Check R version |
+| 命令 | 说明 |
+|------|------|
+| `pixi install` | 安装 conda/bioconda 依赖 |
+| `pixi run setup` | 首次设置（配置 R 环境 + 安装额外包） |
+| `pixi run app` | 启动 Shiny 应用（端口 3838） |
+| `pixi run test` | 运行测试 |
+| `pixi run check-r` | 查看 R 版本 |
 
-> **Note:** `config/Rprofile.site` automatically adds system R packages to the pixi library path, so bioconductor annotation databases (GO.db, org.Hs.eg.db, org.Mm.eg.db, etc.) already installed on your system are reused without re-downloading.
+> **提示：** `config/Rprofile.site` 会自动将系统已安装的 R 包加入 pixi 环境的搜索路径，因此 GO.db、org.Hs.eg.db、org.Mm.eg.db 等 bioconductor 注释数据库无需重复下载。
 
 ---
 
