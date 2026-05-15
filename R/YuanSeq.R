@@ -8,7 +8,7 @@
 #' @name YuanSeq
 #' @docType package
 #' @author Yu Qiao (乔宇)
-#' @references \url{https://github.com/Passpoor/Yuanseq}
+#' @references \url{https://github.com/Passpoor/Yuanclaw}
 NULL
 
 #' @title Launch YuanSeq Shiny App
@@ -22,12 +22,11 @@ NULL
 #' }
 run_app <- function(...) {
   app_dir <- system.file("shiny", package = "YuanSeq")
-  if (app_dir == "") {
-    # 开发模式 | Development mode
-    app_dir <- file.path(dirname(getwd()), "Biofree_project")
-    if (!file.exists(file.path(app_dir, "app.R"))) {
-      app_dir <- getwd()
-    }
+  if (identical(app_dir, "") || !file.exists(file.path(app_dir, "app.R"))) {
+    app_dir <- getwd()
+  }
+  if (!file.exists(file.path(app_dir, "app.R"))) {
+    stop("Cannot find app.R. Run from the YuanSeq repository root or reinstall the package.")
   }
   shiny::runApp(app_dir, launch.browser = TRUE, ...)
 }
@@ -39,7 +38,6 @@ run_app <- function(...) {
 #' @export
 install_deps <- function(bioc_only = FALSE, github_only = FALSE) {
   if (!bioc_only && !github_only) {
-    # CRAN packages
     message("Installing CRAN packages...")
     cran_pkgs <- c(
       "shiny", "shinyjs", "bslib", "ggplot2", "dplyr", "DT",
@@ -52,7 +50,6 @@ install_deps <- function(bioc_only = FALSE, github_only = FALSE) {
   }
 
   if (!github_only) {
-    # Bioconductor packages
     message("Installing Bioconductor packages...")
     if (!requireNamespace("BiocManager", quietly = TRUE)) {
       install.packages("BiocManager")
@@ -66,8 +63,7 @@ install_deps <- function(bioc_only = FALSE, github_only = FALSE) {
     if (length(missing) > 0) BiocManager::install(missing, ask = FALSE)
   }
 
-  # GitHub packages (optional)
-  message("Installing GitHub packages (optional)...")
+  message("Installing optional GitHub packages...")
   tryCatch({
     remotes::install_github("Passpoor/biofree.qyKEGGtools", upgrade = "never")
   }, error = function(e) {
