@@ -88,6 +88,7 @@ source("modules/pathway_activity.R")  # 🆕 通路活性分析模块
 source("modules/chip_analysis.R")      # 🆕 芯片数据分析模块
 source("modules/venn_diagram.R")
 source("modules/ai_interpretation.R")   # 🤖 AI 解读模块
+source("modules/ai_provider_updates.R") # 最新 GLM / DeepSeek API 兼容配置
 
 # ===============================
 # 主应用
