@@ -48,12 +48,12 @@ api_providers <- list(
     name = "DeepSeek",
     endpoint = "https://api.deepseek.com/chat/completions",
     models = c(
-      "deepseek-v4-flash",
-      "deepseek-v4-pro",
       "deepseek-chat",
-      "deepseek-reasoner"
+      "deepseek-reasoner",
+      "deepseek-v4-flash",
+      "deepseek-v4-pro"
     ),
-    default_model = "deepseek-v4-flash"
+    default_model = "deepseek-chat"
   ),
   local = list(
     name = "Local OpenAI-compatible Model",
@@ -201,4 +201,36 @@ call_ai_api <- function(prompt, config) {
       error = paste("API 调用出错:", e$message)
     ))
   })
+}
+
+# Wrap the original AI server so provider choices always follow api_providers.
+# This makes newly added providers such as zhipu_coding visible without editing the long UI file.
+if (exists("ai_interpretation_server", mode = "function") &&
+    !exists("ai_interpretation_server_core", mode = "function")) {
+  ai_interpretation_server_core <- ai_interpretation_server
+
+  ai_interpretation_server <- function(input, output, session, ...) {
+    result <- ai_interpretation_server_core(input, output, session, ...)
+
+    observe({
+      provider_choices <- stats::setNames(
+        names(api_providers),
+        vapply(api_providers, function(x) x$name %||% "Unknown", character(1))
+      )
+
+      selected_provider <- input$ai_provider %||% "deepseek"
+      if (is.null(api_providers[[selected_provider]])) {
+        selected_provider <- "deepseek"
+      }
+
+      shiny::updateSelectInput(
+        session,
+        "ai_provider",
+        choices = provider_choices,
+        selected = selected_provider
+      )
+    }, priority = 2000)
+
+    return(result)
+  }
 }
