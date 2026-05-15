@@ -42,14 +42,14 @@
 
 | Operation | Code |
 |-----------|------|
-| **Install** | `remotes::install_github("Passpoor/Yuanseq", upgrade = "never")` |
-| **Update** | `remotes::install_github("Passpoor/Yuanseq", upgrade = "never", force = TRUE)` |
+| **Install** | `remotes::install_github("Passpoor/Yuanclaw", upgrade = "never")` |
+| **Update** | `remotes::install_github("Passpoor/Yuanclaw", upgrade = "never", force = TRUE)` |
 | **Launch** | `YuanSeq::run_app()` |
 
 **First-time installation:**
 ```r
 if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-remotes::install_github("Passpoor/Yuanseq", upgrade = "never")
+remotes::install_github("Passpoor/Yuanclaw", upgrade = "never")
 YuanSeq::run_app()
 ```
 
@@ -95,8 +95,8 @@ Edit `api_config.json` with your API key:
 ### 方式一：本地安装
 
 ```bash
-git clone https://github.com/Passpoor/Yuanseq.git
-cd Yuanseq
+git clone https://github.com/Passpoor/Yuanclaw.git
+cd Yuanclaw
 ```
 
 ```r
@@ -198,7 +198,7 @@ For users who already installed YuanSeq:
 
 ```r
 # Simply reinstall to get the update
-remotes::install_github("Passpoor/Yuanseq", upgrade = "never", force = TRUE)
+remotes::install_github("Passpoor/Yuanclaw", upgrade = "never", force = TRUE)
 
 # Then launch as usual
 YuanSeq::run_app()
@@ -230,7 +230,7 @@ Thanks to R, Bioconductor, and all package developers!
 ## 📁 Project Structure
 
 ```
-Yuanseq/
+Yuanclaw/
 ├── app.R                      # Main entry
 ├── api_config.example.json    # API config template
 ├── modules/
