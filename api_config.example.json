@@ -1,7 +1,7 @@
 {
-  "_comment": "YuanSeq AI configuration template. Copy this file to ~/.yuanseq/api_config.json and fill in your own credential locally. Never commit private credentials.",
+  "_comment": "YuanSeq AI configuration template. Copy this file to ~/.yuanseq/api_config.json and fill in your own local value. Never commit private credentials.",
   "provider": "deepseek",
-  "credential": "PUT_YOUR_PRIVATE_CREDENTIAL_HERE",
+  "api_key": "",
   "model": "deepseek-chat",
   "custom_endpoint": ""
 }
