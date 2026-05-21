@@ -87,3 +87,13 @@
   - 在 `run_go` / `run_kegg` / `run_gsea` 的 `eventReactive` 开始处做依赖检查；
   - 缺失依赖时给出明确通知并 `return(NULL)`，避免硬崩溃。
 - **结果**：业务流程可继续调试，缺失模块以“可诊断、可恢复”的方式失败。
+
+### 2026-05-21 — KEGG离线优先 + 在线回退策略（主流程）
+
+- **现象**：主流程 KEGG 之前依赖 `biofree.qyKEGGtools` 强制成功，离线库不可用时会直接失败，无法自动尝试在线 `enrichKEGG`。
+- **修复**：
+  - `kegg_enrichment.R` 主流程改为“离线优先、在线回退”：
+    1) 优先 `biofree.qyKEGGtools::enrich_local_KEGG`；
+    2) 若离线不可用/失败，自动回退 `clusterProfiler::enrichKEGG`；
+    3) 两者都失败才报最终错误。
+- **结果**：在不同网络/证书/离线库状态下，KEGG 模块具备更高可用性与可恢复性。

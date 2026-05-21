@@ -334,75 +334,57 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
         }
       }
 
-      # ✅ 强制使用biofree.qyKEGGtools进行KEGG富集分析
+      # ✅ 离线优先：优先使用 biofree.qyKEGGtools，本地失败时回退到 clusterProfiler::enrichKEGG
       kegg_obj <- NULL
-
-      if(!require("biofree.qyKEGGtools", quietly = TRUE)) {
-        showNotification("❌ biofree.qyKEGGtools包未安装，无法进行KEGG富集分析", type = "error")
-        return(NULL)
-      }
-
-      cat("✅ biofree.qyKEGGtools包已加载\n")
-      cat(sprintf("📊 输入基因数量: %d\n", length(ids)))
-      cat(sprintf("📊 输入基因ID类型: %s\n", class(ids)[1]))
-      cat(sprintf("📊 输入基因示例: %s\n", paste(head(ids, 5), collapse = ", ")))
-
-      # 🔧 转换为character向量
       ids_char <- as.character(ids)
-      cat(sprintf("📊 转换为字符后示例: %s\n", paste(head(ids_char, 5), collapse = ", ")))
+      cat(sprintf("📊 输入基因数量: %d\n", length(ids_char)))
+      cat(sprintf("📊 输入基因示例: %s\n", paste(head(ids_char, 5), collapse = ", ")))
 
-      # 构建参数列表（v2.1.0+ 支持 universe、pAdjustMethod、minGSSize、maxGSSize）
-      args_list <- list(
-        gene = ids_char,
-        species = input$kegg_species,
-        pCutoff = input$kegg_p,
-        pAdjustMethod = "BH",
-        minGSSize = 10,
-        maxGSSize = 500
-      )
-      if (!is.null(universe)) {
-        universe_char <- as.character(universe)
-        args_list$universe <- universe_char
-        cat(sprintf("📊 背景基因数量: %d（已传入 enrich_local_KEGG）\n", length(universe_char)))
-      }
-
-      cat("🔧 开始调用biofree.qyKEGGtools::enrich_local_KEGG...\n")
-
-      # 🔍 调试：检查函数是否存在
-      cat(sprintf("📊 enrich_local_KEGG函数存在: %s\n", exists("enrich_local_KEGG", mode = "function")))
-
-      # 🔍 调试：查看函数参数
-      tryCatch({
-        func_args <- formals(biofree.qyKEGGtools::enrich_local_KEGG)
-        cat(sprintf("📊 enrich_local_KEGG函数参数: %s\n", paste(names(func_args), collapse = ", ")))
-      }, error = function(e) {
-        cat(sprintf("⚠️ 无法读取函数参数: %s\n", e$message))
-      })
-
-      # 使用do.call动态调用函数
-      kegg_obj <- tryCatch({
-        result <- do.call(biofree.qyKEGGtools::enrich_local_KEGG, args_list)
-        cat("✅ biofree.qyKEGGtools::enrich_local_KEGG调用成功\n")
-
-        # 🔍 检查返回结果
-        if(!is.null(result)) {
-          cat(sprintf("📊 结果对象类型: %s\n", class(result)[1]))
-          if(inherits(result, "enrichResult")) {
-            cat(sprintf("📊 富集结果数量: %d\n", nrow(result@result)))
-          }
+      if(require("biofree.qyKEGGtools", quietly = TRUE)) {
+        cat("✅ biofree.qyKEGGtools包已加载，优先尝试离线KEGG\n")
+        args_list <- list(
+          gene = ids_char,
+          species = input$kegg_species,
+          pCutoff = input$kegg_p,
+          pAdjustMethod = "BH",
+          minGSSize = 10,
+          maxGSSize = 500
+        )
+        if (!is.null(universe)) {
+          universe_char <- as.character(universe)
+          args_list$universe <- universe_char
+          cat(sprintf("📊 背景基因数量: %d（已传入 enrich_local_KEGG）\n", length(universe_char)))
         }
 
-        result
-      }, error = function(e) {
-        error_msg <- sprintf("biofree.qyKEGGtools调用失败: %s", e$message)
-        cat(sprintf("⚠️ %s\n", error_msg))
-        showNotification(error_msg, type = "error")
-        NULL
-      })
+        kegg_obj <- tryCatch({
+          do.call(biofree.qyKEGGtools::enrich_local_KEGG, args_list)
+        }, error = function(e) {
+          cat(sprintf("⚠️ biofree.qyKEGGtools调用失败，准备回退clusterProfiler::enrichKEGG: %s\n", e$message))
+          NULL
+        })
+      } else {
+        cat("⚠️ biofree.qyKEGGtools不可用，准备回退clusterProfiler::enrichKEGG\n")
+      }
 
-      # 🔧 如果返回NULL，给出详细错误信息
+      # 回退：在线 enrichKEGG（当离线失败或不可用）
+      if (is.null(kegg_obj) && require("clusterProfiler", quietly = TRUE)) {
+        showNotification("离线KEGG不可用，回退到clusterProfiler::enrichKEGG（在线）", type = "warning", duration = 6)
+        kegg_obj <- tryCatch({
+          clusterProfiler::enrichKEGG(
+            gene = ids_char,
+            organism = input$kegg_species,
+            pvalueCutoff = input$kegg_p,
+            pAdjustMethod = "BH",
+            universe = if (!is.null(universe)) as.character(universe) else NULL
+          )
+        }, error = function(e) {
+          cat(sprintf("⚠️ clusterProfiler::enrichKEGG回退失败: %s\n", e$message))
+          NULL
+        })
+      }
+
       if(is.null(kegg_obj)) {
-        showNotification("❌ KEGG富集分析失败：biofree.qyKEGGtools返回NULL\n可能原因：基因ID格式不正确或本地KEGG数据库缺少对应物种的注释", type = "error")
+        showNotification("❌ KEGG富集分析失败：离线与在线两种策略均未成功。请检查网络、证书或本地KEGG数据库。", type = "error", duration = 10)
         return(NULL)
       }
 
