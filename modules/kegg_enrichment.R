@@ -340,28 +340,47 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
       cat(sprintf("📊 输入基因数量: %d\n", length(ids_char)))
       cat(sprintf("📊 输入基因示例: %s\n", paste(head(ids_char, 5), collapse = ", ")))
 
-      if(require("biofree.qyKEGGtools", quietly = TRUE)) {
-        cat("✅ biofree.qyKEGGtools包已加载，优先尝试离线KEGG\n")
+      run_offline_kegg <- function(p_cutoff, min_gs, max_gs) {
         args_list <- list(
           gene = ids_char,
           species = input$kegg_species,
-          pCutoff = input$kegg_p,
+          pCutoff = p_cutoff,
           pAdjustMethod = "BH",
-          minGSSize = 10,
-          maxGSSize = 500
+          minGSSize = min_gs,
+          maxGSSize = max_gs
         )
         if (!is.null(universe)) {
-          universe_char <- as.character(universe)
-          args_list$universe <- universe_char
-          cat(sprintf("📊 背景基因数量: %d（已传入 enrich_local_KEGG）\n", length(universe_char)))
+          args_list$universe <- as.character(universe)
         }
-
-        kegg_obj <- tryCatch({
+        tryCatch({
           do.call(biofree.qyKEGGtools::enrich_local_KEGG, args_list)
         }, error = function(e) {
-          cat(sprintf("⚠️ biofree.qyKEGGtools调用失败，准备回退clusterProfiler::enrichKEGG: %s\n", e$message))
+          cat(sprintf("⚠️ 离线KEGG失败(p=%.3f,minGS=%d,maxGS=%d): %s\n", p_cutoff, min_gs, max_gs, e$message))
           NULL
         })
+      }
+
+      run_online_kegg <- function(p_cutoff, min_gs, max_gs) {
+        tryCatch({
+          clusterProfiler::enrichKEGG(
+            gene = ids_char,
+            organism = input$kegg_species,
+            pvalueCutoff = p_cutoff,
+            pAdjustMethod = "BH",
+            minGSSize = min_gs,
+            maxGSSize = max_gs,
+            universe = if (!is.null(universe)) as.character(universe) else NULL
+          )
+        }, error = function(e) {
+          cat(sprintf("⚠️ 在线KEGG失败(p=%.3f,minGS=%d,maxGS=%d): %s\n", p_cutoff, min_gs, max_gs, e$message))
+          NULL
+        })
+      }
+
+      if(require("biofree.qyKEGGtools", quietly = TRUE)) {
+        cat("✅ biofree.qyKEGGtools包已加载，优先尝试离线KEGG\n")
+        kegg_obj <- run_offline_kegg(input$kegg_p, 10, 500)
+        if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
       } else {
         cat("⚠️ biofree.qyKEGGtools不可用，准备回退clusterProfiler::enrichKEGG\n")
       }
@@ -369,18 +388,21 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
       # 回退：在线 enrichKEGG（当离线失败或不可用）
       if (is.null(kegg_obj) && require("clusterProfiler", quietly = TRUE)) {
         showNotification("离线KEGG不可用，回退到clusterProfiler::enrichKEGG（在线）", type = "warning", duration = 6)
-        kegg_obj <- tryCatch({
-          clusterProfiler::enrichKEGG(
-            gene = ids_char,
-            organism = input$kegg_species,
-            pvalueCutoff = input$kegg_p,
-            pAdjustMethod = "BH",
-            universe = if (!is.null(universe)) as.character(universe) else NULL
-          )
-        }, error = function(e) {
-          cat(sprintf("⚠️ clusterProfiler::enrichKEGG回退失败: %s\n", e$message))
-          NULL
-        })
+        kegg_obj <- run_online_kegg(input$kegg_p, 10, 500)
+        if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
+      }
+
+      # 放宽参数重试：适用于低样本/低覆盖场景
+      if (is.null(kegg_obj)) {
+        showNotification("KEGG首次未命中，尝试放宽参数重试（p=0.2, minGSSize=5）", type = "message", duration = 6)
+        if(require("biofree.qyKEGGtools", quietly = TRUE)) {
+          kegg_obj <- run_offline_kegg(0.2, 5, 1000)
+          if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
+        }
+        if (is.null(kegg_obj) && require("clusterProfiler", quietly = TRUE)) {
+          kegg_obj <- run_online_kegg(0.2, 5, 1000)
+          if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
+        }
       }
 
       if(is.null(kegg_obj)) {
