@@ -77,3 +77,13 @@
 - **原因**：`pixi` 的 `app` 任务使用 `launch.browser=TRUE`。
 - **修复**：将 `pixi.toml` 的 `app` 任务改为 `launch.browser=FALSE`。
 - **结果**：在容器/CI 这类无 GUI 环境可稳定启动服务。
+
+### 2026-05-21 — 功能级容错修复（GO/KEGG/GSEA 缺依赖时友好失败）
+
+- **现象**：虽然应用可启动，但点击 GO/KEGG/GSEA 仍可能因 `clusterProfiler` / `GO.db` 缺失直接报错。
+- **原因**：模块运行时未做依赖前置校验。
+- **修复**：
+  - 在 `go_analysis.R`、`kegg_enrichment.R`、`gsea_analysis.R` 增加 `check_runtime_deps()`；
+  - 在 `run_go` / `run_kegg` / `run_gsea` 的 `eventReactive` 开始处做依赖检查；
+  - 缺失依赖时给出明确通知并 `return(NULL)`，避免硬崩溃。
+- **结果**：业务流程可继续调试，缺失模块以“可诊断、可恢复”的方式失败。
