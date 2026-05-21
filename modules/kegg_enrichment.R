@@ -334,7 +334,7 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
         }
       }
 
-      # ✅ 离线优先：优先使用 biofree.qyKEGGtools，本地失败时回退到 clusterProfiler::enrichKEGG
+      # ✅ 纯离线模式：仅使用 biofree.qyKEGGtools（不回退在线 enrichKEGG）
       kegg_obj <- NULL
       ids_char <- as.character(ids)
       cat(sprintf("📊 输入基因数量: %d\n", length(ids_char)))
@@ -360,36 +360,13 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
         })
       }
 
-      run_online_kegg <- function(p_cutoff, min_gs, max_gs) {
-        tryCatch({
-          clusterProfiler::enrichKEGG(
-            gene = ids_char,
-            organism = input$kegg_species,
-            pvalueCutoff = p_cutoff,
-            pAdjustMethod = "BH",
-            minGSSize = min_gs,
-            maxGSSize = max_gs,
-            universe = if (!is.null(universe)) as.character(universe) else NULL
-          )
-        }, error = function(e) {
-          cat(sprintf("⚠️ 在线KEGG失败(p=%.3f,minGS=%d,maxGS=%d): %s\n", p_cutoff, min_gs, max_gs, e$message))
-          NULL
-        })
-      }
-
       if(require("biofree.qyKEGGtools", quietly = TRUE)) {
         cat("✅ biofree.qyKEGGtools包已加载，优先尝试离线KEGG\n")
         kegg_obj <- run_offline_kegg(input$kegg_p, 10, 500)
         if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
       } else {
-        cat("⚠️ biofree.qyKEGGtools不可用，准备回退clusterProfiler::enrichKEGG\n")
-      }
-
-      # 回退：在线 enrichKEGG（当离线失败或不可用）
-      if (is.null(kegg_obj) && require("clusterProfiler", quietly = TRUE)) {
-        showNotification("离线KEGG不可用，回退到clusterProfiler::enrichKEGG（在线）", type = "warning", duration = 6)
-        kegg_obj <- run_online_kegg(input$kegg_p, 10, 500)
-        if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
+        showNotification("❌ biofree.qyKEGGtools未安装，当前为纯离线模式，无法进行KEGG分析", type = "error", duration = 8)
+        return(NULL)
       }
 
       # 放宽参数重试：适用于低样本/低覆盖场景
@@ -399,14 +376,10 @@ kegg_enrichment_server <- function(input, output, session, deg_results) {
           kegg_obj <- run_offline_kegg(0.2, 5, 1000)
           if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
         }
-        if (is.null(kegg_obj) && require("clusterProfiler", quietly = TRUE)) {
-          kegg_obj <- run_online_kegg(0.2, 5, 1000)
-          if (inherits(kegg_obj, "enrichResult") && nrow(kegg_obj@result) == 0) kegg_obj <- NULL
-        }
       }
 
       if(is.null(kegg_obj)) {
-        showNotification("❌ KEGG富集分析失败：离线与在线两种策略均未成功。请检查网络、证书或本地KEGG数据库。", type = "error", duration = 10)
+        showNotification("❌ KEGG富集分析失败：纯离线模式下未命中通路。请检查ID映射、物种选择或本地KEGG数据库。", type = "error", duration = 10)
         return(NULL)
       }
 
